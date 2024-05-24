@@ -25,7 +25,7 @@ project "ApplicationFramework"
     }
 
     includedirs {
-        "%%{prj.name}/src"
+        "%{prj.name}/src"
     }
 
     filter "system:windows"
@@ -65,7 +65,8 @@ project "ExampleProject"
     }
     
     includedirs {
-        "ApplicationFramework/src"
+        "ApplicationFramework/src",
+        "%{prj.name}/src"
     }
 
     links {
