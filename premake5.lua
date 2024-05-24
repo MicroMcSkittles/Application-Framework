@@ -21,6 +21,7 @@ IncludeDir["GLFW"] = "%{LibDir.GLFW}/include"
 
 -- GLFW =====================================================
 project "GLFW"
+    location "%{LibDir.GLFW}"
 	kind "StaticLib"
 	language "C"
 
