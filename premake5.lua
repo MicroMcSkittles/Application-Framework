@@ -10,12 +10,88 @@ workspace "ApplicationFramework"
 -- Directory final files will be placed into
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Library directories relative to solution directory
+LibDir = {}
+LibDir["GLFW"] = "ApplicationFramework/vendor/GLFW"
+
 -- Include directories relative to solution directory
 IncludeDir = {}
-IncludeDir["GLFW"] = "ApplicationFramework/vendor/GLFW/include"
+IncludeDir["GLFW"] = "%{LibDir.GLFW}/include"
 
-include "ApplicationFramework/vendor/GLFW"
 
+-- GLFW =====================================================
+project "GLFW"
+	kind "StaticLib"
+	language "C"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	files
+	{
+		"%{LibDir.GLFW}/include/GLFW/glfw3.h",
+		"%{LibDir.GLFW}/include/GLFW/glfw3native.h",
+		"%{LibDir.GLFW}/src/glfw_config.h",
+		"%{LibDir.GLFW}/src/context.c",
+		"%{LibDir.GLFW}/src/init.c",
+		"%{LibDir.GLFW}/src/input.c",
+		"%{LibDir.GLFW}/src/monitor.c",
+
+		"%{LibDir.GLFW}/src/null_init.c",
+		"%{LibDir.GLFW}/src/null_joystick.c",
+		"%{LibDir.GLFW}/src/null_monitor.c",
+		"%{LibDir.GLFW}/src/null_window.c",
+
+		"%{LibDir.GLFW}/src/platform.c",
+		"%{LibDir.GLFW}/src/vulkan.c",
+		"%{LibDir.GLFW}/src/window.c",
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+		staticruntime "On"
+
+		files
+		{
+			"%{LibDir.GLFW}/src/win32_init.c",
+			"%{LibDir.GLFW}/src/win32_joystick.c",
+			"%{LibDir.GLFW}/src/win32_module.c",
+			"%{LibDir.GLFW}/src/win32_monitor.c",
+			"%{LibDir.GLFW}/src/win32_time.c",
+			"%{LibDir.GLFW}/src/win32_thread.c",
+			"%{LibDir.GLFW}/src/win32_window.c",
+			"%{LibDir.GLFW}/src/wgl_context.c",
+			"%{LibDir.GLFW}/src/egl_context.c",
+			"%{LibDir.GLFW}/src/osmesa_context.c"
+		}
+
+		defines 
+		{ 
+			"_GLFW_WIN32",
+			"_CRT_SECURE_NO_WARNINGS"
+		}
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "on"
+
+	filter { "system:windows", "configurations:Debug-AS" }	
+		runtime "Debug"
+		symbols "on"
+		sanitize { "Address" }
+		flags { "NoRuntimeChecks", "NoIncrementalLink" }
+
+	filter "configurations:Release"
+		runtime "Release"
+		optimize "speed"
+
+    filter "configurations:Dist"
+		runtime "Release"
+		optimize "speed"
+        symbols "off"
+-- ==========================================================
+
+-- Application Framework ====================================
 project "ApplicationFramework"
     location "ApplicationFramework"
     kind "StaticLib"
@@ -61,7 +137,9 @@ project "ApplicationFramework"
     filter "configurations:Dist"
         defines "APP_Dist"
         optimize "On"
+-- ==========================================================
 
+-- Example Project ==========================================
 project "ExampleProject"
     location "ExampleProject"
     kind "ConsoleApp"
@@ -106,3 +184,4 @@ project "ExampleProject"
     filter "configurations:Dist"
         defines "APP_Dist"
         optimize "On"
+-- ==========================================================
