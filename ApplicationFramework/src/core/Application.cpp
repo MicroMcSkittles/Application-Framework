@@ -1,6 +1,6 @@
 #include "Application.h"
 //#include "Engine/Renderer/Renderer.h"
-//#include "Engine/core/System.h"
+#include "core/System.h"
 #include <iostream>
 //#include <imGUI/imgui.h>
 
@@ -15,8 +15,8 @@ namespace Engine {
 		}
 		s_Instance = this;
 
-		//m_Window = Window::Create();
-		//m_Window->SetEventCallback(BIND_EVENT_FN(Application::ProcEvent));
+		m_Window = Window::Create();
+		m_Window->SetEventCallback(BIND_EVENT_FN(Application::ProcEvent));
 
 		//Renderer::Renderer::Init();
 		
@@ -72,34 +72,34 @@ namespace Engine {
 	{
 		while (m_Running) {
 
-			//float time = System::GetTime();
-			float delta_time = 0;// time - last_frame_time;
-			//last_frame_time = time;
+			float time = System::GetTime();
+			float delta_time = time - last_frame_time;
+			last_frame_time = time;
 			m_DiagnosticInfo.MS = delta_time * 1000;
 			m_DiagnosticInfo.FPS = 1 / delta_time;
 
-			//time = System::GetTime();
+			time = System::GetTime();
 			for (Layer* layer : m_LayerStack) {
 				layer->onUpdate(delta_time);
 			}
-			//m_DiagnosticInfo.UpdateMS = (System::GetTime() - time) * 1000;
+			m_DiagnosticInfo.UpdateMS = (System::GetTime() - time) * 1000;
 
-			//time = System::GetTime();
+			time = System::GetTime();
 			for (Layer* layer : m_LayerStack) {
 				layer->onRender();
 			}
-			//m_DiagnosticInfo.RendererMS = (System::GetTime() - time) * 1000;
+			m_DiagnosticInfo.RendererMS = (System::GetTime() - time) * 1000;
 			//Renderer::Renderer::GetDiagnostic().Milliseconds = m_DiagnosticInfo.RendererMS;
 
-			//time = System::GetTime();
+			time = System::GetTime();
 			//m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack) {
 				layer->onImGuiRender();
 			}
 			//m_ImGuiLayer->End();
-			//m_DiagnosticInfo.ImGuiMS = (System::GetTime() - time) * 1000;
+			m_DiagnosticInfo.ImGuiMS = (System::GetTime() - time) * 1000;
 
-			//m_Window->OnUpdate();
+			m_Window->OnUpdate();
 		}
 	}
 

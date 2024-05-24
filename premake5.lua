@@ -7,7 +7,14 @@ workspace "ApplicationFramework"
         "Dist"
     }
 
+-- Directory final files will be placed into
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
+-- Include directories relative to solution directory
+IncludeDir = {}
+IncludeDir["GLFW"] = "ApplicationFramework/vendor/GLFW/include"
+
+include "ApplicationFramework/vendor/GLFW"
 
 project "ApplicationFramework"
     location "ApplicationFramework"
@@ -25,7 +32,13 @@ project "ApplicationFramework"
     }
 
     includedirs {
-        "%{prj.name}/src"
+        "%{prj.name}/src",
+        "%{IncludeDir.GLFW}"
+    }
+
+    links {
+        "GLFW",
+        "opengl32.lib"
     }
 
     filter "system:windows"

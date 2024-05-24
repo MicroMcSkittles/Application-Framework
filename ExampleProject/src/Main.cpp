@@ -8,12 +8,8 @@ public:
 	MainLayer() : Layer("Main Layer") { }
 	~MainLayer() { }
 
-	virtual void onAttach() override {
-		std::cout << "Attached" << std::endl;
-	}
-
-	virtual void onUpdate(float delta_time) override {
-		std::cout << "Updated" << std::endl;
+	virtual void onEvent(Engine::Event& e) override { 
+		std::cout << e.ToString() << std::endl;
 	}
 };
 

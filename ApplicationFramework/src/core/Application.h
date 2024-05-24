@@ -38,7 +38,7 @@ namespace Engine {
 		void pushOverlay(Layer* layer);
 
 		// Returns a reference to the window.
-		//inline Window& GetWindow() { return *m_Window; }
+		inline Window& GetWindow() { return *m_Window; }
 		// Returns a reference to the ImGui Layer if enabled.
 		//inline ImGuiLayer& GetImGuiLayer() { return *m_ImGuiLayer; }
 	    // Returns a reference to the Application instace.
@@ -65,7 +65,7 @@ namespace Engine {
 
 	private:
 		// Main application window.
-		//std::unique_ptr<Window> m_Window;
+		std::unique_ptr<Window> m_Window;
 		// A list of all registered layers.
 		LayerStack m_LayerStack;
 
