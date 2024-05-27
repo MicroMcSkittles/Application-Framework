@@ -13,10 +13,18 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Library directories relative to solution directory
 LibDir = {}
 LibDir["GLFW"] = "ApplicationFramework/vendor/GLFW"
+LibDir["GLAD"] = "ApplicationFramework/vendor/GLAD"
+LibDir["glm"] = "ApplicationFramework/vendor/glm"
+LibDir["STBImage"] = "ApplicationFramework/vendor/STBImage"
+LibDir["Assimp"] = "ApplicationFramework/vendor/Assimp"
 
 -- Include directories relative to solution directory
 IncludeDir = {}
 IncludeDir["GLFW"] = "%{LibDir.GLFW}/include"
+IncludeDir["GLAD"] = "%{LibDir.GLAD}/include"
+IncludeDir["glm"] = "%{LibDir.glm}"
+IncludeDir["STBImage"] = "%{LibDir.STBImage}"
+IncludeDir["Assimp"] = "%{LibDir.Assimp}/include"
 
 
 -- GLFW =====================================================
@@ -92,6 +100,135 @@ project "GLFW"
         symbols "off"
 -- ==========================================================
 
+-- GLAD =====================================================
+project "GLAD"
+    location "%{LibDir.GLAD}"
+	kind "StaticLib"
+	language "C"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	files
+	{
+		"%{LibDir.GLAD}/include/glad/glad.h",
+		"%{LibDir.GLAD}/include/KHR/khrplatform.h",
+		"%{LibDir.GLAD}/src/glad.c",
+	}
+
+    includedirs {
+        "%{LibDir.GLAD}/include"
+    }
+
+	filter "system:windows"
+		systemversion "latest"
+		staticruntime "On"
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "on"
+
+	filter { "system:windows", "configurations:Debug-AS" }	
+		runtime "Debug"
+		symbols "on"
+		sanitize { "Address" }
+		flags { "NoRuntimeChecks", "NoIncrementalLink" }
+
+	filter "configurations:Release"
+		runtime "Release"
+		optimize "speed"
+
+    filter "configurations:Dist"
+		runtime "Release"
+		optimize "speed"
+        symbols "off"
+-- ==========================================================
+
+-- glm ======================================================
+project "glm"
+    location "%{LibDir.glm}"
+	kind "StaticLib"
+	language "C++"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	files
+	{
+		"%{LibDir.glm}/**.hpp",
+		"%{LibDir.glm}/**.h",
+	}
+
+    includedirs {
+        "%{LibDir.glm}"
+    }
+
+	filter "system:windows"
+		systemversion "latest"
+		staticruntime "On"
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "on"
+
+	filter { "system:windows", "configurations:Debug-AS" }	
+		runtime "Debug"
+		symbols "on"
+		sanitize { "Address" }
+		flags { "NoRuntimeChecks", "NoIncrementalLink" }
+
+	filter "configurations:Release"
+		runtime "Release"
+		optimize "speed"
+
+    filter "configurations:Dist"
+		runtime "Release"
+		optimize "speed"
+        symbols "off"
+-- ==========================================================
+
+-- stb image ================================================
+project "STBImage"
+    location "%{LibDir.STBImage}"
+	kind "StaticLib"
+	language "C++"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	files
+	{
+		"%{LibDir.STBImage}/stb_image.h",
+	}
+
+    includedirs {
+        "%{LibDir.STBImage}"
+    }
+
+	filter "system:windows"
+		systemversion "latest"
+		staticruntime "On"
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "on"
+
+	filter { "system:windows", "configurations:Debug-AS" }	
+		runtime "Debug"
+		symbols "on"
+		sanitize { "Address" }
+		flags { "NoRuntimeChecks", "NoIncrementalLink" }
+
+	filter "configurations:Release"
+		runtime "Release"
+		optimize "speed"
+
+    filter "configurations:Dist"
+		runtime "Release"
+		optimize "speed"
+        symbols "off"
+-- ==========================================================
+
 -- Application Framework ====================================
 project "ApplicationFramework"
     location "ApplicationFramework"
@@ -110,11 +247,16 @@ project "ApplicationFramework"
 
     includedirs {
         "%{prj.name}/src",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.GLAD}",
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.STBImage}",
+        "%{IncludeDir.Assimp}",
     }
 
     links {
         "GLFW",
+        "GLAD",
         "opengl32.lib"
     }
 
@@ -124,7 +266,8 @@ project "ApplicationFramework"
         systemversion "latest"
 
         defines {
-            "APP_PLATFORM_WINDOWS"
+            "APP_PLATFORM_WINDOWS",
+			"GLFW_INCLUDE_NONE"
         }
 
     filter "configurations:Debug"
@@ -158,11 +301,12 @@ project "ExampleProject"
     
     includedirs {
         "ApplicationFramework/src",
-        "%{prj.name}/src"
+        "%{prj.name}/src",
+		"%{IncludeDir.glm}"
     }
 
     links {
-        "ApplicationFramework"
+        "ApplicationFramework",
     }
     
     filter "system:windows"

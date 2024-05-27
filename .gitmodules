@@ -1,3 +1,6 @@
 [submodule "ApplicationFramework/vendor/GLFW"]
 	path = ApplicationFramework/vendor/GLFW
 	url = https://github.com/TheCherno/GLFW
+[submodule "ApplicationFramework/vendor/Assimp"]
+	path = ApplicationFramework/vendor/Assimp
+	url = https://github.com/assimp/assimp.git

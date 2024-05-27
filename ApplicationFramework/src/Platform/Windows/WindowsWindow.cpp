@@ -2,7 +2,7 @@
 #include "core/Event/KeyEvent.h"
 #include "core/Event/ApplicationEvent.h"
 #include "core/Event/MouseEvent.h"
-//#include "Engine/Renderer/Renderer.h"
+#include "Renderer/Renderer.h"
 #include <iostream>
 
 namespace Engine {
@@ -35,8 +35,8 @@ namespace Engine {
             //glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
             m_Window = glfwCreateWindow((int)m_Data.width, (int)m_Data.height, m_Data.Title.c_str(), nullptr, nullptr);
 
-            //m_Context = std::unique_ptr<Renderer::OpenGL::OpenGLContext>(new Renderer::OpenGL::OpenGLContext(m_Window));
-            //m_Context->Init();
+            m_Context = std::unique_ptr<Renderer::OpenGL::OpenGLContext>(new Renderer::OpenGL::OpenGLContext(m_Window));
+            m_Context->Init();
             //Renderer::Renderer::OnWindowResize(m_Data.width, m_Data.height);
 
             glfwSetWindowUserPointer(m_Window, &m_Data);
@@ -133,7 +133,7 @@ namespace Engine {
         void WindowsWindow::OnUpdate()
         {
             glfwPollEvents();
-            //m_Context->SwapBuffers();
+            m_Context->SwapBuffers();
         }
 
         unsigned int WindowsWindow::GetWidth() const

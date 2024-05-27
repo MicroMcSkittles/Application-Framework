@@ -1,5 +1,5 @@
 #include "Application.h"
-//#include "Engine/Renderer/Renderer.h"
+#include "Renderer/Renderer.h"
 #include "core/System.h"
 #include <iostream>
 //#include <imGUI/imgui.h>
@@ -15,17 +15,18 @@ namespace Engine {
 		}
 		s_Instance = this;
 
+
 		m_Window = Window::Create();
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::ProcEvent));
 
-		//Renderer::Renderer::Init();
+		Renderer::Renderer::Init();
 		
 		m_Running = true;
 
 		//m_ImGuiLayer = new ImGuiLayer();
 		//pushOverlay(m_ImGuiLayer);
 
-		//last_frame_time = System::GetTime();
+		last_frame_time = System::GetTime();
 	}
 	Application::~Application()
 	{
@@ -89,7 +90,7 @@ namespace Engine {
 				layer->onRender();
 			}
 			m_DiagnosticInfo.RendererMS = (System::GetTime() - time) * 1000;
-			//Renderer::Renderer::GetDiagnostic().Milliseconds = m_DiagnosticInfo.RendererMS;
+			Renderer::Renderer::GetDiagnostic().Milliseconds = m_DiagnosticInfo.RendererMS;
 
 			time = System::GetTime();
 			//m_ImGuiLayer->Begin();
@@ -110,7 +111,7 @@ namespace Engine {
 	}
 	bool Application::OnWindowResize(WindowResizeEvent & e)
 	{
-		//Renderer::Renderer::OnWindowResize(e.getWidth(), e.getHeight());
+		Renderer::Renderer::OnWindowResize(e.getWidth(), e.getHeight());
 		return false;
 	}
 }

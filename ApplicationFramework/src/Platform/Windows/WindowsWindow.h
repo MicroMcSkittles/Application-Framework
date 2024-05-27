@@ -1,6 +1,6 @@
 #pragma once
 #include "core/Window.h"
-//#include "Platform/OpenGL/OpenGLContext.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 #include <GLFW/glfw3.h>
 
 namespace Engine::Platform::Windows {
@@ -23,7 +23,7 @@ namespace Engine::Platform::Windows {
 		virtual void * GetNativeWindow() const override;
 	private:
 		GLFWwindow* m_Window;
-		//std::unique_ptr<Renderer::OpenGL::OpenGLContext> m_Context;
+		std::unique_ptr<Renderer::OpenGL::OpenGLContext> m_Context;
 
 		struct WindowData {
 			std::string Title;
