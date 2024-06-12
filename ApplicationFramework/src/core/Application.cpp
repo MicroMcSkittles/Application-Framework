@@ -4,6 +4,8 @@
 #include <iostream>
 //#include <imGUI/imgui.h>
 
+#include <glad/glad.h>
+
 namespace Engine {
 	Application::Application(int argc, char** argv)
 	{
@@ -72,6 +74,20 @@ namespace Engine {
 	void Application::run()
 	{
 		while (m_Running) {
+
+			//glClear(GL_COLOR_BUFFER_BIT);
+
+			// Drawing is done by specifying a sequence of vertices.  The way these
+			// vertices are connected (or not connected) depends on the argument to
+			// glBegin.  GL_POLYGON constructs a filled polygon.
+			///glBegin(GL_POLYGON);
+			//glColor3f(1, 0, 0); glVertex3f(-0.6, -0.75, 0.5);
+			//glColor3f(0, 1, 0); glVertex3f(0.6, -0.75, 0);
+			//glColor3f(0, 0, 1); glVertex3f(0, 0.75, 0);
+			//glEnd();
+
+			// Flush drawing command buffer to make drawing happen as soon as possible.
+			//glFlush();
 
 			float time = System::GetTime();
 			float delta_time = time - last_frame_time;

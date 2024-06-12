@@ -62,7 +62,7 @@ namespace Engine::Renderer {
 			glGenFramebuffers(1, &m_RenderID);
 			glBindFramebuffer(GL_FRAMEBUFFER, m_RenderID);
 
-			glm::vec2 wsize = {Application::Get().GetWindow().GetWidth(), Application::Get().GetWindow().GetHeight() };
+			glm::vec2 wsize = { Application::Get().GetWindow().GetWidth(), Application::Get().GetWindow().GetHeight() };
 			m_Size = wsize;
 			std::vector<uint32_t> attachments;
 
@@ -77,7 +77,7 @@ namespace Engine::Renderer {
 				glDrawBuffers(attachments.size(), attachments.data());
 			}
 
-			if(m_DepthTesting) {
+			if (m_DepthTesting) {
 				glGenRenderbuffers(1, &m_RBO);
 				glBindRenderbuffer(GL_RENDERBUFFER, m_RBO);
 				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, wsize.x, wsize.y);

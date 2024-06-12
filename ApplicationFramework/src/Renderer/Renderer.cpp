@@ -56,6 +56,7 @@ namespace Engine::Renderer {
 		m_DiagnosticInfo.NumberDrawCalls = 0;
 		m_DiagnosticInfo.NumberUniformCalls = 0;
 		m_DiagnosticInfo.NumberTriangles = 0;
+		RenderCommand::Clear();
 		m_Data.m_PostProcFrameBuffer->Bind();
 		RenderCommand::Clear();
 		m_Data.m_Camera = camera;

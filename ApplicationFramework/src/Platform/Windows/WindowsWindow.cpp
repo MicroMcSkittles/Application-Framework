@@ -46,7 +46,7 @@ namespace Engine {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
                 WindowCloseEvent e;
                 data.callback(e);
-            });
+                });
 
             glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -55,7 +55,7 @@ namespace Engine {
 
                 data.width = width;
                 data.height = height;
-            });
+                });
 
             glfwSetWindowFocusCallback(m_Window, [](GLFWwindow* window, int focus) {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -69,7 +69,7 @@ namespace Engine {
                     data.callback(e);
                     return;
                 }
-            });
+                });
 
             glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -95,7 +95,7 @@ namespace Engine {
                     break;
                 }
                 }
-            });
+                });
 
             glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods) {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -115,19 +115,19 @@ namespace Engine {
                     break;
                 }
                 }
-            });
+                });
 
             glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double x, double y) {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
                 MouseMovedEvent e(x, y);
                 data.callback(e);
-            });
+                });
 
             glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double x, double y) {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
                 MouseScolledEvent e(x, y);
                 data.callback(e);
-            });
+                });
         }
 
         void WindowsWindow::OnUpdate()

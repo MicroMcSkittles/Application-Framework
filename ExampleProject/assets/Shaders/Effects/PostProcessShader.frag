@@ -8,5 +8,5 @@ uniform sampler2D FrameTexture;
 
 void main() {
 	vec3 v = texture(FrameTexture, TexCoord).rgb;
-	FragColor = vec4(v, 1);
+	FragColor = vec4(v,1);
 }
