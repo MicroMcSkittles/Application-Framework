@@ -313,7 +313,8 @@ project "ApplicationFramework"
 
         defines {
             "APP_PLATFORM_WINDOWS",
-			"GLFW_INCLUDE_NONE"
+			"GLFW_INCLUDE_NONE",
+			"GLM_ENABLE_EXPERIMENTAL"
         }
 
     filter "configurations:Debug"
