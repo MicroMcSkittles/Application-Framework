@@ -51,6 +51,31 @@ namespace Engine::Renderer {
 			glm::vec2 m_Size;
 			std::vector<std::shared_ptr<Texture2D>> m_Textures;
 		};
+
+		class OpenGLShaderStorageBuffer : public ShaderStorageBuffer {
+		public:
+			OpenGLShaderStorageBuffer(uint32_t binding, uint32_t elementSize, uint32_t count);
+
+			virtual void Bind() const override;
+			virtual void Unbind() const override;
+
+			virtual uint32_t GetCount() const override {
+				return m_Count;
+			}
+			virtual uint32_t GetElementSize() const override {
+				return m_ElementSize;
+			}
+
+			virtual void resize(uint32_t count) override;
+			// Set the values of buffers data
+			virtual void subData(uint32_t offset, uint32_t count, const void* data) override;
+		
+		private:
+			uint32_t m_RenderID;
+			uint32_t m_Binding;
+			uint32_t m_Count;
+			uint32_t m_ElementSize;
+		};
 	}
 }
 

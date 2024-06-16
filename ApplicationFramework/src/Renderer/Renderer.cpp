@@ -1,6 +1,8 @@
 #include "Renderer.h"
 //#include <imGUI/imgui.h>
 
+#include <glad/glad.h>
+
 namespace Engine::Renderer {
 	namespace {
 		float postProc_Vertex_List[] = {
@@ -26,6 +28,9 @@ namespace Engine::Renderer {
 			s_PostProcQuad->AddVertexBuffer(vbo);
 			s_PostProcQuad->SetIndexBuffer(ebo);
 		}
+
+		// TODO: Delete this
+		std::shared_ptr<ShaderStorageBuffer> ssb;
 	}
 
 	void Renderer::Init()
@@ -43,6 +48,19 @@ namespace Engine::Renderer {
 		m_Data.ColorSpecBufferIndex = 0;
 
 		m_Data.m_PostProcFrameBuffer = FrameBuffer::Create(true, { ColorSpecularBuffer });
+
+		// TODO: delete
+		int size = sizeof(float) * 4;
+
+		ssb = ShaderStorageBuffer::Create(1, size, 3);
+
+		float Data[12] = {
+			1,0,1,0,
+			1,1,0,0,
+			0,1,1,0
+		};
+
+		ssb->subData(0, 3, (const void*)Data);
 	}
 	void Renderer::OnWindowResize(unsigned int width, unsigned int height)
 	{
@@ -84,38 +102,19 @@ namespace Engine::Renderer {
 		shader->SetUniform("ViewProjection", UDMat4::Create(m_Data.m_Camera->getViewProjection()));
 		shader->SetUniform("CameraPosition", UDVec3::Create(m_Data.m_Camera->getPosition()));
 
+		model->GetStorageBuffer()->Bind();
+
 		for (uint32_t i = 0; i < model->GetMeshes().size(); ++i) {
 			auto& mesh = model->GetMeshes()[i];
-			uint32_t matIndex = model->GetMaterialIndexs()[i];
-			Submit(mesh, transform, model->GetMaterials()[matIndex], shader);
+			Submit(mesh, transform, shader);
 		}
 
+		model->GetStorageBuffer()->Unbind();
 		shader->Unbind();
 	}
 	void Renderer::Submit(std::shared_ptr<Mesh> mesh, const glm::mat4& transform, std::shared_ptr<Shader> shader) {
 		shader->Bind();
 		shader->SetUniform("Model", UDMat4::Create(transform));
-
-		RenderCommand::DrawIndexed(mesh->GetVAO());
-
-		shader->Unbind();
-	}
-	void Renderer::Submit(std::shared_ptr<Mesh> mesh, const glm::mat4 & transform, std::shared_ptr<Material> material, std::shared_ptr<Shader> shader)
-	{
-		shader->Bind();
-		shader->SetUniform("Model", UDMat4::Create(transform));
-
-		if (material->GetType() == MaterialType::Textured) {
-			std::shared_ptr<TexturedMaterial> mat = std::dynamic_pointer_cast<TexturedMaterial>(material);
-			shader->SetUniform("albedoMap", UDTexture::Create(mat->Albedo));
-		}
-		else if (material->GetType() == MaterialType::Plane) {
-			std::shared_ptr<PlaneMaterial> mat = std::dynamic_pointer_cast<PlaneMaterial>(material);
-			shader->SetUniform("albedo", UDVec3::Create(mat->Albedo));
-			shader->SetUniform("metallic", UDFloat::Create(mat->Metallic));
-			shader->SetUniform("roughness", UDFloat::Create(mat->Roughness));
-			shader->SetUniform("ao", UDFloat::Create(mat->AO));
-		} 
 
 		RenderCommand::DrawIndexed(mesh->GetVAO());
 

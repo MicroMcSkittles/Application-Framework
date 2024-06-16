@@ -7,6 +7,8 @@ workspace "ApplicationFramework"
         "Dist"
     }
 
+	startproject "ExampleProject"
+
 -- Directory final files will be placed into
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
@@ -16,7 +18,7 @@ LibDir["GLFW"] = "ApplicationFramework/vendor/GLFW"
 LibDir["GLAD"] = "ApplicationFramework/vendor/GLAD"
 LibDir["glm"] = "ApplicationFramework/vendor/glm"
 LibDir["STBImage"] = "ApplicationFramework/vendor/STBImage"
-LibDir["Assimp"] = "ApplicationFramework/vendor/Assimp"
+LibDir["TinyOBJLoader"] = "ApplicationFramework/vendor/TinyOBJLoader"
 
 -- Include directories relative to solution directory
 IncludeDir = {}
@@ -24,7 +26,7 @@ IncludeDir["GLFW"] = "%{LibDir.GLFW}/include"
 IncludeDir["GLAD"] = "%{LibDir.GLAD}/include"
 IncludeDir["glm"] = "%{LibDir.glm}"
 IncludeDir["STBImage"] = "%{LibDir.STBImage}"
-IncludeDir["Assimp"] = "%{LibDir.Assimp}/include"
+IncludeDir["TinyOBJLoader"] = "%{LibDir.TinyOBJLoader}"
 
 
 -- GLFW =====================================================
@@ -187,6 +189,49 @@ project "glm"
         symbols "off"
 -- ==========================================================
 
+-- TinyOBJLoader ============================================
+project "TinyOBJLoader"
+    location "%{LibDir.TinyOBJLoader}"
+	kind "StaticLib"
+	language "C++"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	files
+	{
+		"%{LibDir.TinyOBJLoader}/tiny_obj_loader.h",
+		"%{LibDir.TinyOBJLoader}/tiny_obj_loader.cc",
+	}
+
+    includedirs {
+        "%{LibDir.TinyOBJLoader}"
+    }
+
+	filter "system:windows"
+		systemversion "latest"
+		staticruntime "On"
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		symbols "on"
+
+	filter { "system:windows", "configurations:Debug-AS" }	
+		runtime "Debug"
+		symbols "on"
+		sanitize { "Address" }
+		flags { "NoRuntimeChecks", "NoIncrementalLink" }
+
+	filter "configurations:Release"
+		runtime "Release"
+		optimize "speed"
+
+    filter "configurations:Dist"
+		runtime "Release"
+		optimize "speed"
+        symbols "off"
+-- ==========================================================
+
 -- stb image ================================================
 project "STBImage"
     location "%{LibDir.STBImage}"
@@ -251,12 +296,13 @@ project "ApplicationFramework"
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.STBImage}",
-        "%{IncludeDir.Assimp}",
+        "%{IncludeDir.TinyOBJLoader}",
     }
 
     links {
         "GLFW",
         "GLAD",
+		"TinyOBJLoader",
         "opengl32.lib"
     }
 

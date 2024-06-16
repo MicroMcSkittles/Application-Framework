@@ -4,3 +4,6 @@
 [submodule "ApplicationFramework/vendor/Assimp"]
 	path = ApplicationFramework/vendor/Assimp
 	url = https://github.com/assimp/assimp.git
+[submodule "ApplicationFrameWork/vendor/TinyOBJLoader"]
+	path = ApplicationFrameWork/vendor/TinyOBJLoader
+	url = https://github.com/tinyobjloader/tinyobjloader.git

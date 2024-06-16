@@ -24,4 +24,11 @@ namespace Engine::Renderer {
 		}
 		return std::shared_ptr<FrameBuffer>();
 	}
+	std::shared_ptr<ShaderStorageBuffer> ShaderStorageBuffer::Create(uint32_t binding, uint32_t elementSize, uint32_t count)
+	{
+		switch (Renderer::GetAPI()) {
+		case RendererAPI::API::OpenGL: return std::shared_ptr<ShaderStorageBuffer>(new OpenGL::OpenGLShaderStorageBuffer(binding, elementSize, count));
+		}
+		return std::shared_ptr<ShaderStorageBuffer>();
+	}
 }

@@ -25,7 +25,6 @@ namespace Engine::Renderer {
 
 		static void Submit(std::shared_ptr<Model> model, const glm::mat4& transform, std::shared_ptr<Shader> shader);
 		static void Submit(std::shared_ptr<Mesh> mesh, const glm::mat4& transform, std::shared_ptr<Shader> shader);
-		static void Submit(std::shared_ptr<Mesh> mesh, const glm::mat4& transform, std::shared_ptr<Material> material, std::shared_ptr<Shader> shader);
 		static void Submit(std::shared_ptr<VertexArray> VAO, const glm::mat4& transform, std::shared_ptr<Shader> shader);
 
 		static void ShowRendererDiagnostic();

@@ -134,4 +134,21 @@ namespace Engine::Renderer {
 
 		static std::shared_ptr<FrameBuffer> Create(bool DepthTest, const std::vector<TextureProps>& TextureAttachments);
 	};
+
+	class ShaderStorageBuffer {
+	public:
+		virtual ~ShaderStorageBuffer() { }
+
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
+
+		virtual uint32_t GetCount() const = 0;
+		virtual uint32_t GetElementSize() const = 0;
+
+		virtual void resize(uint32_t count) = 0;
+		// Set the values of buffers data
+		virtual void subData(uint32_t offset, uint32_t count, const void* data) = 0;
+
+		static std::shared_ptr<ShaderStorageBuffer> Create(uint32_t binding, uint32_t elementSize, uint32_t count);
+	};
 }

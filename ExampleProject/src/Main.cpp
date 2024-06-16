@@ -3,6 +3,8 @@
 
 #include <Renderer/CameraController.h>
 
+#include <AssetLoading/OBJLoader.h>
+
 #include <iostream>
 
 using namespace Engine;
@@ -10,13 +12,13 @@ using namespace Engine;
 namespace {
 	std::vector<float> skyboxVertices = {
 		-3,  3, -3,
-		3,  3, -3,
+		 3,  3, -3,
 		-3, -3, -3,
-		3, -3, -3,
+		 3, -3, -3,
 		-3,  3,  3,
-		3,  3,  3,
+		 3,  3,  3,
 		-3, -3,  3,
-		3, -3,  3
+		 3, -3,  3
 	};
 	std::vector<uint32_t> skyboxIndices = {
 		0, 1, 2, // Side 0
@@ -54,7 +56,7 @@ public:
 			Application::Get().GetWindow().GetHeight(),
 			45.0f, 0.1f, 5000.0f
 		);
-		m_MainCamera->setDirection({ 0,0,1 });
+		m_MainCamera->setDirection({ 0,0,-1 });
 		m_CameraController = Renderer::CameraController::Create(m_MainCamera);
 
 		m_PostProcShader = Renderer::Shader::Create(
@@ -65,12 +67,18 @@ public:
 			"assets/Shaders/Effects/SkyBoxShader.vert",
 			"assets/Shaders/Effects/SkyBoxShader.frag"
 		);
+		m_MainShader = Renderer::Shader::Create(
+			"assets/Shaders/Phong.vert",
+			"assets/Shaders/Phong.frag"
+		);
 
 		m_SkyBoxMesh = Renderer::Mesh::Create(skyboxVertices, skyboxIndices);
 		CubeMapProps[0].TWrapMode = Renderer::TextureWrapMode::ClampToEdge;
 		CubeMapProps[0].SWrapMode = Renderer::TextureWrapMode::ClampToEdge;
 		CubeMapProps[0].RWrapMode = Renderer::TextureWrapMode::ClampToEdge;
 		m_SkyBoxCubeMap = Renderer::CubeMap::Create(CubeMapProps, false);
+
+		m_MainModel = AssetLoader::OBJLoader::Load("assets/Models/Monkey.obj");
 	}
 
 	virtual void onUpdate(float delta_time) override { 
@@ -94,6 +102,9 @@ public:
 		Renderer::RenderCommand::Disable(Renderer::RenderFlag::TwoSided);
 		Renderer::RenderCommand::SetDepthFunc(Renderer::DepthFunction::Less);
 		// ======
+
+		Renderer::Renderer::Submit(m_MainModel, glm::mat4(1), m_MainShader);
+
 		Renderer::Renderer::EndFrame();
 
 		Renderer::Renderer::Render(m_PostProcShader);
@@ -111,6 +122,9 @@ private:
 	std::shared_ptr<Renderer::Shader> m_SkyBoxShader;
 	std::shared_ptr<Renderer::Mesh> m_SkyBoxMesh;
 	std::shared_ptr<Renderer::CubeMap> m_SkyBoxCubeMap;
+
+	std::shared_ptr<Renderer::Shader> m_MainShader;
+	std::shared_ptr<Renderer::Model> m_MainModel;
 };
 
 class App : public Application {

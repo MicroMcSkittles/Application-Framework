@@ -1,5 +1,6 @@
 #pragma once
 #include "Core.h"
+#include <iostream>
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
@@ -27,14 +28,17 @@ namespace Engine {
 
 	void Logger::LogError(std::string msg)
 	{
-		m_Log.push_back({ msg, {1,0,1}, 0 });
+		//m_Log.push_back({ msg, {1,0,1}, 0 });
+		std::cout << "Error {\n" << msg << "\n}\n";
 	}
 	void Logger::LogWarning(std::string msg)
 	{
-		m_Log.push_back({ msg, {1,1,0}, 1 });
+		//m_Log.push_back({ msg, {1,1,0}, 1 });
+		std::cout << "Warning {\n" << msg << "\n}\n";
 	}
 	void Logger::LogInfo(std::string msg)
 	{
-		m_Log.push_back({ msg, {0,1,1}, 2 });
+		//m_Log.push_back({ msg, {0,1,1}, 2 });
+		std::cout << "Info {\n" << msg << "\n}\n";
 	}
 }

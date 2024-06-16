@@ -117,5 +117,41 @@ namespace Engine::Renderer {
 			//RenderCommand::SetViewport(0, 0, width, height);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
-	}
+
+		// Shader Storage Buffer
+		OpenGLShaderStorageBuffer::OpenGLShaderStorageBuffer(uint32_t binding, uint32_t elementSize, uint32_t count)
+			:m_Binding(binding), m_ElementSize(elementSize), m_Count(count)
+		{
+			glGenBuffers(1, &m_RenderID);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_RenderID);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, m_ElementSize * m_Count, NULL, GL_DYNAMIC_READ);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		}
+
+		void OpenGLShaderStorageBuffer::Bind() const
+		{
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_RenderID);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, m_Binding, m_RenderID);
+		}
+		void OpenGLShaderStorageBuffer::Unbind() const
+		{
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, m_Binding, 0);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		}
+
+		void OpenGLShaderStorageBuffer::resize(uint32_t count)
+		{
+			m_Count = count;
+			glGenBuffers(1, &m_RenderID);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_RenderID);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, m_ElementSize * m_Count, NULL, GL_DYNAMIC_READ);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		}
+		void OpenGLShaderStorageBuffer::subData(uint32_t offset, uint32_t count, const void * data)
+		{
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_RenderID);
+			glBufferSubData(GL_SHADER_STORAGE_BUFFER, offset, m_ElementSize * count, data);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		}
+}
 }
