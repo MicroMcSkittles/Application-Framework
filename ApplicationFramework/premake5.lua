@@ -1,5 +1,4 @@
 project "ApplicationFramework"
-    location "ApplicationFramework"
     kind "StaticLib"
     language "C++"
 
