@@ -28,9 +28,6 @@ namespace Engine::Renderer {
 			s_PostProcQuad->AddVertexBuffer(vbo);
 			s_PostProcQuad->SetIndexBuffer(ebo);
 		}
-
-		// TODO: Delete this
-		std::shared_ptr<ShaderStorageBuffer> ssb;
 	}
 
 	void Renderer::Init()
@@ -48,19 +45,6 @@ namespace Engine::Renderer {
 		m_Data.ColorSpecBufferIndex = 0;
 
 		m_Data.m_PostProcFrameBuffer = FrameBuffer::Create(true, { ColorSpecularBuffer });
-
-		// TODO: delete
-		int size = sizeof(float) * 4;
-
-		ssb = ShaderStorageBuffer::Create(1, size, 3);
-
-		float Data[12] = {
-			1,0,1,0,
-			1,1,0,0,
-			0,1,1,0
-		};
-
-		ssb->subData(0, 3, (const void*)Data);
 	}
 	void Renderer::OnWindowResize(unsigned int width, unsigned int height)
 	{
@@ -102,14 +86,16 @@ namespace Engine::Renderer {
 		shader->SetUniform("ViewProjection", UDMat4::Create(m_Data.m_Camera->getViewProjection()));
 		shader->SetUniform("CameraPosition", UDVec3::Create(m_Data.m_Camera->getPosition()));
 
-		model->GetStorageBuffer()->Bind();
+		model->GetMaterialStorageBuffer()->Bind();
+		model->GetTextureStorageBuffer()->Bind();
 
 		for (uint32_t i = 0; i < model->GetMeshes().size(); ++i) {
 			auto& mesh = model->GetMeshes()[i];
 			Submit(mesh, transform, shader);
 		}
 
-		model->GetStorageBuffer()->Unbind();
+		model->GetTextureStorageBuffer()->Unbind();
+		model->GetMaterialStorageBuffer()->Unbind();
 		shader->Unbind();
 	}
 	void Renderer::Submit(std::shared_ptr<Mesh> mesh, const glm::mat4& transform, std::shared_ptr<Shader> shader) {

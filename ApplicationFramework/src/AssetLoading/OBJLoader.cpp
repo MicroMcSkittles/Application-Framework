@@ -1,4 +1,5 @@
 #include "OBJLoader.h"
+#include <filesystem>
 #include <tiny_obj_loader.h>
 #include "core/Logger.h"
 
@@ -61,22 +62,122 @@ namespace Engine::AssetLoader {
             meshes.push_back(Renderer::Mesh::Create(vertices, indices, VertexLayout));
         }
 
-        std::shared_ptr<Renderer::Model> model = Renderer::Model::Create(meshes);
+        std::shared_ptr<Renderer::Model> model = Renderer::Model::Create(meshes, path);
 
         for (const auto& m : tol_materials) {
             Renderer::Material Material;
 
-            glm::vec3 albedo = { 
-                m.diffuse[0],
-                m.diffuse[1],
-                m.diffuse[2]
-            };
-            Material.Albedo = albedo;
+            // Ambient value
+            {
+                if (m.ambient_texname == "") {
+                    unsigned char data[3] = {
+                        m.ambient[0] * 255,
+                        m.ambient[1] * 255,
+                        m.ambient[2] * 255,
+                    };
+                    model->PushTexture(Renderer::Texture2D::Create(1, 1, data));
+                }
+                else {
+                    //TODO: Edit texture props
+                    std::filesystem::path p = path;
+
+                    Renderer::TextureProps props;
+                    props.Path = p.parent_path().string() + "/" + m.ambient_texname;
+                    model->PushTexture(Renderer::Texture2D::Create(props));
+                }
+                Material.AmbientMap_ID = model->GetTextureHandles().size() - 1;
+            }
+
+            // Diffuse value
+            {
+                if (m.diffuse_texname == "") {
+                    unsigned char data[3] = {
+                        m.diffuse[0] * 255,
+                        m.diffuse[1] * 255,
+                        m.diffuse[2] * 255,
+                    };
+                    model->PushTexture(Renderer::Texture2D::Create(1, 1, data));
+                }
+                else {
+                    //TODO: Edit texture props
+                    std::filesystem::path p = path;
+
+                    Renderer::TextureProps props;
+                    props.Path = p.parent_path().string() + "/" + m.diffuse_texname;
+                    model->PushTexture(Renderer::Texture2D::Create(props));
+                }
+                Material.DiffuseMap_ID = model->GetTextureHandles().size() - 1;
+            }
+
+            // Specular value
+            {
+                if (m.specular_texname == "") {
+                    unsigned char data[3] = {
+                        m.specular[0] * 255,
+                        m.specular[1] * 255,
+                        m.specular[2] * 255,
+                    };
+                    model->PushTexture(Renderer::Texture2D::Create(1, 1, data));
+                }
+                else {
+                    //TODO: Edit texture props
+                    std::filesystem::path p = path;
+
+                    Renderer::TextureProps props;
+                    props.Path = p.parent_path().string() + "/" + m.specular_texname;
+                    model->PushTexture(Renderer::Texture2D::Create(props));
+                }
+                Material.SpecularMap_ID = model->GetTextureHandles().size() - 1;
+            }
+
+            // Specular Exponent value
+            {
+                if (m.specular_highlight_texname == "") {
+                    unsigned char data[1] = {
+                        255
+                    };
+                    Renderer::TextureProps props;
+                    props.DataFormat = Renderer::TextureFormat::Monocrome;
+                    props.InternalFormat = Renderer::TextureFormat::R8;
+                    model->PushTexture(Renderer::Texture2D::Create(1, 1, data));
+                }
+                else {
+                    //TODO: Edit texture props
+                    std::filesystem::path p = path;
+
+                    Renderer::TextureProps props;
+                    props.Path = p.parent_path().string() + "/" + m.specular_highlight_texname;
+                    model->PushTexture(Renderer::Texture2D::Create(props));
+                }
+                Material.SpecularExponentMap_ID = model->GetTextureHandles().size() - 1;
+            }
+            
+            // Alpha value
+            {
+                if (m.alpha_texname == "") {
+                    unsigned char data[1] = {
+                        255
+                    };
+                    Renderer::TextureProps props;
+                    props.DataFormat = Renderer::TextureFormat::Monocrome;
+                    props.InternalFormat = Renderer::TextureFormat::R8;
+                    model->PushTexture(Renderer::Texture2D::Create(1, 1, data));
+                }
+                else {
+                    //TODO: Edit texture props
+                    std::filesystem::path p = path;
+
+                    Renderer::TextureProps props;
+                    props.Path = p.parent_path().string() + "/" + m.alpha_texname;
+                    model->PushTexture(Renderer::Texture2D::Create(props));
+                }
+                Material.AlphaMap_ID = model->GetTextureHandles().size() - 1;
+            }
 
             model->PushMaterial(Material);
         }
 
-        model->CreateMaterialList();
+        model->CreateSSBs();
 
         return model;
     }

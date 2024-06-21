@@ -57,7 +57,7 @@ public:
 			45.0f, 0.1f, 5000.0f
 		);
 		m_MainCamera->setDirection({ 0,0,-1 });
-		m_CameraController = Renderer::CameraController::Create(m_MainCamera);
+		m_CameraController = Renderer::CameraController::Create(m_MainCamera, 500);
 
 		m_PostProcShader = Renderer::Shader::Create(
 			"assets/Shaders/Effects/PostProcessShader.vert",
@@ -78,11 +78,26 @@ public:
 		CubeMapProps[0].RWrapMode = Renderer::TextureWrapMode::ClampToEdge;
 		m_SkyBoxCubeMap = Renderer::CubeMap::Create(CubeMapProps, false);
 
-		m_MainModel = AssetLoader::OBJLoader::Load("assets/Models/Monkey.obj");
+		m_MainModel = AssetLoader::OBJLoader::Load("assets/Models/sponza.obj");
 	}
 
 	virtual void onUpdate(float delta_time) override { 
 		m_CameraController->OnUpdate(delta_time);
+
+		if (Input::IsKeyPressed(KEY_TAB)) {
+			m_PostProcShader = Renderer::Shader::Create(
+				"assets/Shaders/Effects/PostProcessShader.vert",
+				"assets/Shaders/Effects/PostProcessShader.frag"
+			);
+			m_SkyBoxShader = Renderer::Shader::Create(
+				"assets/Shaders/Effects/SkyBoxShader.vert",
+				"assets/Shaders/Effects/SkyBoxShader.frag"
+			);
+			m_MainShader = Renderer::Shader::Create(
+				"assets/Shaders/Phong.vert",
+				"assets/Shaders/Phong.frag"
+			);
+		}
 	}
 
 	virtual void onRender() override { 

@@ -14,9 +14,12 @@ namespace Engine::Renderer {
 		DepthTest = BIT(2)
 	};
 
-	constexpr uint32_t MaterialSize = sizeof(float) * 4;
+	constexpr uint32_t MaterialSize = sizeof(int) * 5;
 	struct Material {
-		glm::vec3 Albedo = { 0.0f, 0.0f, 0.0f };
-		float PAD1 = 0.0f;
+		int AmbientMap_ID;
+		int DiffuseMap_ID;
+		int SpecularMap_ID;
+		int SpecularExponentMap_ID;
+		int AlphaMap_ID;
 	};
 }

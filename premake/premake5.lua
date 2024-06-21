@@ -10,16 +10,16 @@ workspace "ApplicationFramework"
         "Dist"
     }
 
-	startproject "ExampleProject"
+	startproject "PROJECT_NAME_HERE"
 
 -- Directory final files will be placed into
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Libraries
-include("ApplicationFramework/vendor")
+include("Application-Framework/ApplicationFramework/vendor")
 
 -- Application Framework
-include("ApplicationFramework")
+include("Application-Framework/ApplicationFramework")
 
 project "PROJECT_NAME_HERE"
     location "PROJECT_NAME_HERE"
@@ -30,16 +30,16 @@ project "PROJECT_NAME_HERE"
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
     
     files {
-        "src/**.c",
-        "src/**.h",
-        "src/**.cpp",
-        "src/**.hpp"
+        "%{prj.name}/src/**.c",
+        "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/src/**.hpp"
     }
     
     includedirs {
-        "../ApplicationFramework/src",
-        "src",
-		"../ApplicationFramework/vendor/glm"
+        "Application-Framework/ApplicationFramework/src",
+        "%{prj.name}/src",
+		"Application-Framework/ApplicationFramework/vendor/glm"
     }
 
     links {

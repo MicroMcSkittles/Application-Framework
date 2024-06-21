@@ -25,6 +25,13 @@ namespace Engine::Renderer {
 		}
 		return std::shared_ptr<Texture2D>();
 	}
+	std::shared_ptr<Texture2D> Texture2D::Create(uint32_t width, uint32_t height, unsigned char* data, const TextureProps & props)
+	{
+		switch (Renderer::GetAPI()) {
+		case RendererAPI::API::OpenGL: return std::shared_ptr<Texture2D>(new OpenGL::OpenGLTexture2D(width, height, data, props));
+		}
+		return std::shared_ptr<Texture2D>();
+	}
 
 	std::shared_ptr<CubeMap> CubeMap::Create(const std::vector<TextureProps>& props, bool CheckHandler)
 	{

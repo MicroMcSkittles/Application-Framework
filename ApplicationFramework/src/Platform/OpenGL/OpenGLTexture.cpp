@@ -22,6 +22,7 @@ namespace Engine::Renderer {
 				switch (m)
 				{
 				case Engine::Renderer::TextureFormat::Monocrome: return GL_RED;
+				case Engine::Renderer::TextureFormat::R8: return GL_R8;
 				case Engine::Renderer::TextureFormat::RG: return GL_RG;
 				case Engine::Renderer::TextureFormat::RG8: return GL_RG8;
 				case Engine::Renderer::TextureFormat::RGB: return GL_RGB;
@@ -122,6 +123,33 @@ namespace Engine::Renderer {
 			glBindTexture(GL_TEXTURE_2D, m_RendererID);
 
 			glTexImage2D(GL_TEXTURE_2D, 0, TextureFormattoOpenGL(m_Props.InternalFormat), width, height, 0, TextureFormattoOpenGL(m_Props.DataFormat), TextureDataTypetoOpenGL(m_Props.DataType), NULL);
+			if (props.SWrapMode != TextureWrapMode::None) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, TextureWrapModetoOpenGL(props.SWrapMode));
+			if (props.TWrapMode != TextureWrapMode::None) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, TextureWrapModetoOpenGL(props.TWrapMode));
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TextureFiltertoOpenGL(m_Props.MinFilter));
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, TextureFiltertoOpenGL(m_Props.MagFilter));
+
+			glBindTexture(GL_TEXTURE_2D, 0);
+			m_Size = { width, height };
+
+			m_Handle = glGetTextureHandleARB(m_RendererID);
+			glMakeTextureHandleResidentARB(m_Handle);
+		}
+		OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height, unsigned char * data, const TextureProps & props)
+		{
+			m_Props = props;
+
+			glGenTextures(1, &m_RendererID);
+			glBindTexture(GL_TEXTURE_2D, m_RendererID);
+			glTexImage2D(GL_TEXTURE_2D, 0, TextureFormattoOpenGL(m_Props.InternalFormat), width, height, 0, TextureFormattoOpenGL(m_Props.DataFormat), TextureDataTypetoOpenGL(m_Props.DataType), data);
+			if (props.DataFormat == TextureFormat::Monocrome) {
+				GLint swizzle[4] = {
+					GL_RED,   // Shader Red   channel source = Texture Red
+					GL_RED,   // Shader Green channel source = Texture Red
+					GL_RED,   // Shader Blue  channel source = Texture Red
+					GL_ONE    // Shader Alpha channel source = One
+				};
+				glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzle);
+			}
 			if (props.SWrapMode != TextureWrapMode::None) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, TextureWrapModetoOpenGL(props.SWrapMode));
 			if (props.TWrapMode != TextureWrapMode::None) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, TextureWrapModetoOpenGL(props.TWrapMode));
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TextureFiltertoOpenGL(m_Props.MinFilter));

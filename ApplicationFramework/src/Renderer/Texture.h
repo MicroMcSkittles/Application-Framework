@@ -14,6 +14,7 @@ namespace Engine::Renderer {
 	};
 	enum class TextureFormat {
 		Monocrome,
+		R8,
 		RG,
 		RG8,
 		RGB,
@@ -68,6 +69,7 @@ namespace Engine::Renderer {
 		virtual void Unbind() const = 0;
 
 		virtual void* GetID() const = 0;
+		virtual uint64_t GetHandle() const = 0;
 
 		virtual void Resize(uint32_t width, uint32_t height) = 0;
 		virtual glm::vec2 GetSize() const = 0;
@@ -76,6 +78,7 @@ namespace Engine::Renderer {
 		//virtual void Load() const = 0;
 		static std::shared_ptr<Texture2D> Create(const TextureProps& props = TextureProps(), bool CheckHandler = true);
 		static std::shared_ptr<Texture2D> Create(uint32_t width, uint32_t height, const TextureProps& props = TextureProps());
+		static std::shared_ptr<Texture2D> Create(uint32_t width, uint32_t height, unsigned char* data, const TextureProps& props = TextureProps());
 	};
 
 	class CubeMap : public Texture {

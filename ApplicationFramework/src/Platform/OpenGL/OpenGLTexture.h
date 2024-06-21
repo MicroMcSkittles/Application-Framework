@@ -6,7 +6,8 @@ namespace Engine::Renderer {
 		class OpenGLTexture2D : public Texture2D {
 		public:
 			OpenGLTexture2D(std::string path, const TextureProps& props);
-			OpenGLTexture2D(uint32_t width, uint32_t height,const TextureProps& props);
+			OpenGLTexture2D(uint32_t width, uint32_t height, const TextureProps& props);
+			OpenGLTexture2D(uint32_t width, uint32_t height, unsigned char* data, const TextureProps& props);
 			~OpenGLTexture2D();
 
 			virtual void Resize(uint32_t width, uint32_t height) override;
@@ -16,8 +17,8 @@ namespace Engine::Renderer {
 
 			virtual void* GetID() const override { 
 				return (void*)m_RendererID; }
+			virtual uint64_t GetHandle() const override { return m_Handle; }
 
-			uint64_t GetHandle() const { return m_Handle; }
 			virtual glm::vec2 GetSize() const override { return m_Size; }
 			virtual TextureProps GetProps() const override { return m_Props; }
 		private:
