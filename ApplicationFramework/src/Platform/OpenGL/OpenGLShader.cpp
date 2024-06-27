@@ -210,7 +210,7 @@ namespace Engine::Renderer {
 
 			vertexSourceCode = preprocSource(vertexSourceCode);
 			fragmentSourceCode = preprocSource(fragmentSourceCode);
-			//Logger::LogWarning(fragmentSourceCode);
+			//Logger::LogWarning(vertexSourceCode);
 
 			uint32_t vertexShader = glCreateShader(GL_VERTEX_SHADER);
 			uint32_t fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);

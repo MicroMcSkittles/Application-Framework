@@ -9,7 +9,9 @@ project "ApplicationFramework"
         "src/**.c",
         "src/**.h",
         "src/**.cpp",
-        "src/**.hpp"
+        "src/**.hpp",
+        "vendor/imgui/**.h",
+        "vendor/imgui/**.cpp",
     }
 
     includedirs {
@@ -19,6 +21,7 @@ project "ApplicationFramework"
         "vendor/glm",
         "vendor/STBImage",
         "vendor/TinyOBJLoader",
+        "vendor/imgui/"
     }
 
     links {

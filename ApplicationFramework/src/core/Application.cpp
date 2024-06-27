@@ -1,10 +1,8 @@
 #include "Application.h"
 #include "Renderer/Renderer.h"
 #include "core/System.h"
+#include <imgui.h>
 #include <iostream>
-//#include <imGUI/imgui.h>
-
-#include <glad/glad.h>
 
 namespace Engine {
 	Application::Application(int argc, char** argv)
@@ -25,8 +23,8 @@ namespace Engine {
 		
 		m_Running = true;
 
-		//m_ImGuiLayer = new ImGuiLayer();
-		//pushOverlay(m_ImGuiLayer);
+		m_ImGuiLayer = new ImGuiLayer();
+		pushOverlay(m_ImGuiLayer);
 
 		last_frame_time = System::GetTime();
 	}
@@ -48,13 +46,13 @@ namespace Engine {
 
 	void Application::ShowDiagnostic()
 	{
-		//ImGui::Begin("Application Diagnostic");
-		//ImGui::Text("FPS: %f", m_DiagnosticInfo.FPS);
-		//ImGui::Text("MS: %f", m_DiagnosticInfo.MS);
-		//ImGui::Text("Game Update MS: %f", m_DiagnosticInfo.UpdateMS);
-		//ImGui::Text("ImGui MS: % f", m_DiagnosticInfo.ImGuiMS);
-		//ImGui::Text("Renderer MS: %f", m_DiagnosticInfo.RendererMS);
-		//ImGui::End();
+		ImGui::Begin("Application Diagnostic");
+		ImGui::Text("FPS: %f", m_DiagnosticInfo.FPS);
+		ImGui::Text("MS: %f", m_DiagnosticInfo.MS);
+		ImGui::Text("Game Update MS: %f", m_DiagnosticInfo.UpdateMS);
+		ImGui::Text("ImGui MS: % f", m_DiagnosticInfo.ImGuiMS);
+		ImGui::Text("Renderer MS: %f", m_DiagnosticInfo.RendererMS);
+		ImGui::End();
 	}
 
 	void Application::ProcEvent(Event & e)
@@ -74,21 +72,6 @@ namespace Engine {
 	void Application::run()
 	{
 		while (m_Running) {
-
-			//glClear(GL_COLOR_BUFFER_BIT);
-
-			// Drawing is done by specifying a sequence of vertices.  The way these
-			// vertices are connected (or not connected) depends on the argument to
-			// glBegin.  GL_POLYGON constructs a filled polygon.
-			///glBegin(GL_POLYGON);
-			//glColor3f(1, 0, 0); glVertex3f(-0.6, -0.75, 0.5);
-			//glColor3f(0, 1, 0); glVertex3f(0.6, -0.75, 0);
-			//glColor3f(0, 0, 1); glVertex3f(0, 0.75, 0);
-			//glEnd();
-
-			// Flush drawing command buffer to make drawing happen as soon as possible.
-			//glFlush();
-
 			float time = System::GetTime();
 			float delta_time = time - last_frame_time;
 			last_frame_time = time;
@@ -109,11 +92,11 @@ namespace Engine {
 			Renderer::Renderer::GetDiagnostic().Milliseconds = m_DiagnosticInfo.RendererMS;
 
 			time = System::GetTime();
-			//m_ImGuiLayer->Begin();
+			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack) {
 				layer->onImGuiRender();
 			}
-			//m_ImGuiLayer->End();
+			m_ImGuiLayer->End();
 			m_DiagnosticInfo.ImGuiMS = (System::GetTime() - time) * 1000;
 
 			m_Window->OnUpdate();

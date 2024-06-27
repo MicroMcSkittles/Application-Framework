@@ -29,6 +29,7 @@ namespace Engine::Renderer {
 				case Engine::Renderer::TextureFormat::RGB8: return GL_RGB8;
 				case Engine::Renderer::TextureFormat::RGB16Float: return GL_RGB16F;
 				case Engine::Renderer::TextureFormat::RGBA: return GL_RGBA;
+				case Engine::Renderer::TextureFormat::DepthComponent: return GL_DEPTH_COMPONENT;
 				}
 			}
 			uint32_t TextureFiltertoOpenGL(TextureFilter m) {
@@ -77,7 +78,7 @@ namespace Engine::Renderer {
 				}
 				glGenTextures(1, &m_RendererID);
 				glBindTexture(GL_TEXTURE_2D, m_RendererID);
-				glTextureStorage2D(m_RendererID, 1, internalFormat, width, height);
+				//glTextureStorage2D(m_RendererID, 1, internalFormat, width, height);
 				//// set the texture wrapping/filtering options (on the currently bound texture object)
 				
 				if (dataFormat == GL_RED) {
@@ -95,8 +96,8 @@ namespace Engine::Renderer {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TextureFiltertoOpenGL(m_Props.MinFilter));
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, TextureFiltertoOpenGL(m_Props.MagFilter));
 
-				//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-				glTextureSubImage2D(m_RendererID, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, data);
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+				//glTextureSubImage2D(m_RendererID, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, data);
 				glGenerateMipmap(GL_TEXTURE_2D);
 			}
 			else

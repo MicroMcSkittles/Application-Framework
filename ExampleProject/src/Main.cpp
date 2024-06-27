@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 using namespace Engine;
 
 namespace {
@@ -54,10 +56,10 @@ public:
 		m_MainCamera = Renderer::PerspectiveCamera::Create(
 			Application::Get().GetWindow().GetWidth(),
 			Application::Get().GetWindow().GetHeight(),
-			45.0f, 0.1f, 5000.0f
+			45.0f, 0.1f, 1000.0f
 		);
-		m_MainCamera->setDirection({ 0,0,-1 });
-		m_CameraController = Renderer::CameraController::Create(m_MainCamera, 500);
+		m_MainCamera->setDirection({ 1,0,0 });
+		m_CameraController = Renderer::CameraController::Create(m_MainCamera, 3);
 
 		m_PostProcShader = Renderer::Shader::Create(
 			"assets/Shaders/Effects/PostProcessShader.vert",
@@ -71,6 +73,10 @@ public:
 			"assets/Shaders/Phong.vert",
 			"assets/Shaders/Phong.frag"
 		);
+		m_LightShader = Renderer::Shader::Create(
+			"assets/Shaders/Phong.vert",
+			"assets/Shaders/Effects/SolidColor.frag"
+		);
 
 		m_SkyBoxMesh = Renderer::Mesh::Create(skyboxVertices, skyboxIndices);
 		CubeMapProps[0].TWrapMode = Renderer::TextureWrapMode::ClampToEdge;
@@ -78,7 +84,13 @@ public:
 		CubeMapProps[0].RWrapMode = Renderer::TextureWrapMode::ClampToEdge;
 		m_SkyBoxCubeMap = Renderer::CubeMap::Create(CubeMapProps, false);
 
-		m_MainModel = AssetLoader::OBJLoader::Load("assets/Models/sponza.obj");
+		m_MainModel = AssetLoader::OBJLoader::LoadModel("assets/Models/sponza.obj");
+		m_LightModel = AssetLoader::OBJLoader::LoadModel("assets/Models/LightCube.obj");
+	
+		m_Lights.push_back(Renderer::PointLight::Create({ 5, 2, 0 }));
+		m_Lights.push_back(Renderer::PointLight::Create({ -5, 2, 0 }));
+		//m_Lights.push_back(Renderer::DirectionalLight::Create({ 0.5, -0.5, 0.5 }));
+		//m_Lights.push_back(Renderer::DirectionalLight::Create({ -1, 0, 0 }));
 	}
 
 	virtual void onUpdate(float delta_time) override { 
@@ -97,11 +109,25 @@ public:
 				"assets/Shaders/Phong.vert",
 				"assets/Shaders/Phong.frag"
 			);
+			m_LightShader = Renderer::Shader::Create(
+				"assets/Shaders/Phong.vert",
+				"assets/Shaders/Effects/SolidColor.frag"
+			);
 		}
 	}
 
 	virtual void onRender() override { 
-		Renderer::Renderer::BeginFrame(m_MainCamera);
+		Renderer::Renderer::BeginFrame(m_MainCamera, m_Lights);
+
+		Renderer::Renderer::Submit(m_MainModel, glm::scale(glm::translate(glm::mat4(1), {0,0,0}), glm::vec3(0.01f)), m_MainShader);
+
+		for (auto& l : m_Lights) {
+			if (l->GetType() == Renderer::LightType::PointLight) {
+				std::shared_ptr<Renderer::PointLight> pl = std::dynamic_pointer_cast<Renderer::PointLight>(l);
+				Renderer::Renderer::Submit(m_LightModel, glm::scale(glm::translate(glm::mat4(1), pl->GetData().Position), glm::vec3(0.1)), m_LightShader);
+			}
+		}
+		
 		// Skybox
 		m_SkyBoxShader->Bind();
 		m_SkyBoxShader->SetUniform("View", Renderer::UDMat4::Create(glm::mat4(glm::mat3(m_MainCamera->getView()))));
@@ -118,15 +144,13 @@ public:
 		Renderer::RenderCommand::SetDepthFunc(Renderer::DepthFunction::Less);
 		// ======
 
-		Renderer::Renderer::Submit(m_MainModel, glm::mat4(1), m_MainShader);
-
 		Renderer::Renderer::EndFrame();
 
 		Renderer::Renderer::Render(m_PostProcShader);
 	}
 
 	virtual void onImGuiRender() override { 
-	
+		Application::Get().ShowDiagnostic();
 	}
 
 private:
@@ -140,6 +164,10 @@ private:
 
 	std::shared_ptr<Renderer::Shader> m_MainShader;
 	std::shared_ptr<Renderer::Model> m_MainModel;
+
+	std::vector<std::shared_ptr<Renderer::Light>> m_Lights;
+	std::shared_ptr<Renderer::Shader> m_LightShader;
+	std::shared_ptr<Renderer::Model> m_LightModel;
 };
 
 class App : public Application {

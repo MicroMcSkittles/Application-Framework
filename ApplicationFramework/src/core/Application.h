@@ -3,7 +3,7 @@
 #include "LayerStack.h"
 #include "Window.h"
 #include "Event/ApplicationEvent.h"
-//#include "Engine/ImGui/ImGuiLayer.h"
+#include "ImGui/ImGuiLayer.h"
 
 namespace Engine {
 	// Basic information for diagnosing problems with the framework.
@@ -40,7 +40,7 @@ namespace Engine {
 		// Returns a reference to the window.
 		inline Window& GetWindow() { return *m_Window; }
 		// Returns a reference to the ImGui Layer if enabled.
-		//inline ImGuiLayer& GetImGuiLayer() { return *m_ImGuiLayer; }
+		inline ImGuiLayer& GetImGuiLayer() { return *m_ImGuiLayer; }
 	    // Returns a reference to the Application instace.
 		inline static Application& Get() { return *s_Instance; }
 
@@ -70,7 +70,7 @@ namespace Engine {
 		LayerStack m_LayerStack;
 
 		// A pointer to the ImGui layer.
-		//ImGuiLayer* m_ImGuiLayer;
+		ImGuiLayer* m_ImGuiLayer;
 
 		// A flag storing if the application is running.
 		bool m_Running;

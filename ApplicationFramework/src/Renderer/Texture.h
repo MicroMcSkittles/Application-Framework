@@ -20,7 +20,8 @@ namespace Engine::Renderer {
 		RGB,
 		RGB8,
 		RGB16Float,
-		RGBA
+		RGBA,
+		DepthComponent
 	};
 	enum class TextureDataType {
 		Float,
@@ -36,7 +37,7 @@ namespace Engine::Renderer {
 		std::string Path;
 
 		// The filter used when shrinking a texture.
-		TextureFilter MinFilter = TextureFilter::Nearest;
+		TextureFilter MinFilter = TextureFilter::Linear;
 		// The filter used when magnifying a texture.
 		TextureFilter MagFilter = TextureFilter::Linear;
 

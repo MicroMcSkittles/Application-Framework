@@ -6,20 +6,17 @@ layout (location = 3) in float aMatID;
 
 layout(std430, binding = 0) readonly buffer GeneralData {
     mat4 ViewProjection;
-    
+    mat4 LightSpaceMatrix;
+
     vec3 CameraPosition;
 };
 uniform mat4 Model;
 
-out vec3 WorldPosition;
-out vec3 WorldNormal;
 out vec2 TexCoord;
 out flat int MatID;
 
 void main() {
-    gl_Position = ViewProjection * Model * vec4(aPos, 1.0f);
-    WorldPosition = vec3(Model * vec4(aPos, 1.0f));
-    WorldNormal = aNormal;
     TexCoord = aTexCoord;
     MatID = int(aMatID);
+    gl_Position = ViewProjection * Model * vec4(aPos, 1.0f);
 }

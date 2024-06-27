@@ -15,7 +15,7 @@ project "ExampleProject"
     includedirs {
         "../ApplicationFramework/src",
         "src",
-		"../ApplicationFramework/vendor/glm"
+		"../ApplicationFramework/vendor/glm",
     }
 
     links {

@@ -37,8 +37,8 @@ namespace Engine::Renderer {
 
 	class OrthographicCamera : public Camera {
 	public:
-		static std::shared_ptr<OrthographicCamera> Create(float width, float height) {
-			return std::shared_ptr<OrthographicCamera>(new OrthographicCamera(width, height));
+		static std::shared_ptr<OrthographicCamera> Create(float width, float height, float near, float far) {
+			return std::shared_ptr<OrthographicCamera>(new OrthographicCamera(width, height, near, far));
 		}
 
 		virtual void onResize(int width, int height) override;
@@ -46,13 +46,15 @@ namespace Engine::Renderer {
 		virtual void recalculateView() override;
 		virtual void displayImGui() override;
 	private:
-		OrthographicCamera(float width, float height);
+		OrthographicCamera(float width, float height, float near, float far);
 
 	private:
 		float m_Width;
 		float m_Height;
 		float m_AspectRatio;
 		float m_ZoomLevel;
+		float m_NearPlane;
+		float m_FarPlane;
 	};
 
 	class PerspectiveCamera : public Camera {

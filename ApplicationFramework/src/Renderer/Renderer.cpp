@@ -1,7 +1,6 @@
 #include "Renderer.h"
-//#include <imGUI/imgui.h>
-
-#include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
+#include <algorithm>
 
 namespace Engine::Renderer {
 	namespace {
@@ -42,29 +41,82 @@ namespace Engine::Renderer {
 		ColorSpecularBuffer.DataType = TextureDataType::Ubyte;
 		ColorSpecularBuffer.MinFilter = TextureFilter::Nearest;
 		ColorSpecularBuffer.MagFilter = TextureFilter::Nearest;
-		m_Data.ColorSpecBufferIndex = 0;
+		m_Data.ColorSpecBufferIndex = 1;
 
 		m_Data.m_PostProcFrameBuffer = FrameBuffer::Create(true, { ColorSpecularBuffer });
+		m_Data.m_GeneralStorageBuffer = ShaderStorageBuffer::Create(0, sizeof(glm::mat4) + sizeof(glm::vec4));
+	
+		m_Data.m_LightData.m_PointLightStorageBuffer = ShaderStorageBuffer::Create(1, 0);
+		m_Data.m_LightData.m_DirectionalLightStorageBuffer = ShaderStorageBuffer::Create(2, 0);
 	}
 	void Renderer::OnWindowResize(unsigned int width, unsigned int height)
 	{
+		m_Data.m_Width = width;
+		m_Data.m_Height = height;
 		m_Data.m_PostProcFrameBuffer->Resize(width, height);
 		RenderCommand::SetViewport(0, 0, width, height);
 		if(m_Data.m_Camera && width != 0 && height != 0) m_Data.m_Camera->onResize(width, height);
 	}
 
-	void Renderer::BeginFrame(std::shared_ptr<Camera> camera)
+	void Renderer::BeginFrame(std::shared_ptr<Camera> camera, std::vector<std::shared_ptr<Light>>& Lights)
 	{
 		m_DiagnosticInfo.NumberDrawCalls = 0;
 		m_DiagnosticInfo.NumberUniformCalls = 0;
 		m_DiagnosticInfo.NumberTriangles = 0;
+		m_Data.m_Camera = camera;
+
+		// Store importent information in the main storage buffer.
+		uint32_t offset = 0;
+		m_Data.m_GeneralStorageBuffer->subData(offset, sizeof(glm::mat4), (const void*)glm::value_ptr(m_Data.m_Camera->getViewProjection())); offset += sizeof(glm::mat4);
+		m_Data.m_GeneralStorageBuffer->subData(offset, sizeof(glm::vec4), (const void*)glm::value_ptr(m_Data.m_Camera->getPosition()));		  offset += sizeof(glm::vec4);
+		
+		std::vector<PointLightData> PLData;
+		std::vector<DirectionalLightData> DLData;
+
+		for (auto& l : Lights) {
+			switch (l->GetType())
+			{
+			case LightType::PointLight: {
+				std::shared_ptr<PointLight> pl = std::dynamic_pointer_cast<PointLight>(l);
+				PLData.push_back(pl->GetData());
+				break;
+			}
+			case LightType::DirectionalLight: {
+				std::shared_ptr<DirectionalLight> dl = std::dynamic_pointer_cast<DirectionalLight>(l);
+				DLData.push_back(dl->GetData());
+				break;
+			}
+			default:
+				break;
+			}
+		}
+
+		if (PLData.size() != m_Data.m_LightData.LFPointLightCount) {
+			m_Data.m_LightData.LFPointLightCount = PLData.size();
+			m_Data.m_LightData.m_PointLightStorageBuffer->resize(m_Data.m_LightData.LFPointLightCount * PointLightDataSize);
+		}
+
+		m_Data.m_LightData.m_PointLightStorageBuffer->subData(0, m_Data.m_LightData.LFPointLightCount * PointLightDataSize, (const void*)PLData.data());
+
+		if (DLData.size() != m_Data.m_LightData.LFDirectionalLightCount) {
+			m_Data.m_LightData.LFDirectionalLightCount = DLData.size();
+			m_Data.m_LightData.m_DirectionalLightStorageBuffer->resize(m_Data.m_LightData.LFDirectionalLightCount * DirectionalLightDataSize);
+		}
+		m_Data.m_LightData.m_DirectionalLightStorageBuffer->subData(0, m_Data.m_LightData.LFDirectionalLightCount * DirectionalLightDataSize, (const void*)DLData.data());
+		
+		m_Data.m_GeneralStorageBuffer->Bind();
+		m_Data.m_LightData.m_PointLightStorageBuffer->Bind();
+		m_Data.m_LightData.m_DirectionalLightStorageBuffer->Bind();
+
 		RenderCommand::Clear();
 		m_Data.m_PostProcFrameBuffer->Bind();
 		RenderCommand::Clear();
-		m_Data.m_Camera = camera;
 	}
 	void Renderer::EndFrame()
 	{
+		m_Data.m_LightData.m_DirectionalLightStorageBuffer->Unbind();
+		m_Data.m_LightData.m_PointLightStorageBuffer->Unbind();
+		m_Data.m_GeneralStorageBuffer->Unbind();
 		m_Data.m_PostProcFrameBuffer->Unbind();
 	}
 	void Renderer::Render(std::shared_ptr<Shader> postProcShader)
@@ -83,9 +135,6 @@ namespace Engine::Renderer {
 
 	void Renderer::Submit(std::shared_ptr<Model> model, const glm::mat4& transform, std::shared_ptr<Shader> shader) {
 		shader->Bind();
-		shader->SetUniform("ViewProjection", UDMat4::Create(m_Data.m_Camera->getViewProjection()));
-		shader->SetUniform("CameraPosition", UDVec3::Create(m_Data.m_Camera->getPosition()));
-
 		model->GetMaterialStorageBuffer()->Bind();
 		model->GetTextureStorageBuffer()->Bind();
 

@@ -17,17 +17,17 @@ namespace Engine::Renderer {
 		}
 		return std::shared_ptr<IndexBuffer>();
 	}
-	std::shared_ptr<FrameBuffer> FrameBuffer::Create(bool DepthTest, const std::vector<TextureProps>& TextureAttachments)
+	std::shared_ptr<FrameBuffer> FrameBuffer::Create(bool UseColorBuffer, const std::vector<TextureProps>& TextureAttachments)
 	{
 		switch (Renderer::GetAPI()) {
-		case RendererAPI::API::OpenGL: return std::shared_ptr<FrameBuffer>(new OpenGL::OpenGLFrameBuffer(DepthTest, TextureAttachments));
+		case RendererAPI::API::OpenGL: return std::shared_ptr<FrameBuffer>(new OpenGL::OpenGLFrameBuffer(UseColorBuffer, TextureAttachments));
 		}
 		return std::shared_ptr<FrameBuffer>();
 	}
-	std::shared_ptr<ShaderStorageBuffer> ShaderStorageBuffer::Create(uint32_t binding, uint32_t elementSize, uint32_t count)
+	std::shared_ptr<ShaderStorageBuffer> ShaderStorageBuffer::Create(uint32_t binding, uint32_t size)
 	{
 		switch (Renderer::GetAPI()) {
-		case RendererAPI::API::OpenGL: return std::shared_ptr<ShaderStorageBuffer>(new OpenGL::OpenGLShaderStorageBuffer(binding, elementSize, count));
+		case RendererAPI::API::OpenGL: return std::shared_ptr<ShaderStorageBuffer>(new OpenGL::OpenGLShaderStorageBuffer(binding, size));
 		}
 		return std::shared_ptr<ShaderStorageBuffer>();
 	}

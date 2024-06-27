@@ -1,14 +1,13 @@
 #include "Camera.h"
-//#include <imGUI/imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Engine::Renderer {
 	
 
-	OrthographicCamera::OrthographicCamera(float width, float height)
-		:m_Width(width), m_Height(height), m_AspectRatio(width / height), m_ZoomLevel(1)
+	OrthographicCamera::OrthographicCamera(float width, float height, float near, float far)
+		:m_Width(width), m_Height(height), m_AspectRatio(width / height), m_NearPlane(near), m_FarPlane(far), m_ZoomLevel(1)
 	{
-		m_Projection = glm::ortho(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, -1.0f, 1.0f);
+		m_Projection = glm::ortho(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, m_NearPlane, m_FarPlane);
 		recalculateView();
 	}
 	void OrthographicCamera::onResize(int width, int height)
@@ -20,16 +19,14 @@ namespace Engine::Renderer {
 	}
 	void OrthographicCamera::recalculateProjection()
 	{
-		m_Projection = glm::ortho(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, -1.0f, 1.0f);
+		m_Projection = glm::ortho(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, -1000.0f, 1000.0f);
 		m_InvProjection = glm::inverse(m_Projection);
 		m_ViewProjection = m_Projection * m_View;
 	}
 	void OrthographicCamera::recalculateView()
 	{
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position) * glm::rotate(glm::rotate(glm::rotate(glm::mat4(1.0f), glm::radians(m_Direction.x), glm::vec3(1, 0, 0)), glm::radians(m_Direction.y), glm::vec3(0, 1, 0)), glm::radians(m_Direction.z), glm::vec3(0, 0, 1));
-
-		m_View = glm::inverse(transform);
-		m_InvView = transform;
+		m_View = glm::lookAt(m_Position, m_Position + m_Direction, glm::vec3(0.0f, 1.0f, 0.0f));
+		m_InvView = glm::inverse(m_View);
 		m_ViewProjection = m_Projection * m_View;
 	}
 	void OrthographicCamera::displayImGui()

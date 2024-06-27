@@ -3,6 +3,8 @@
 #include "Model.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Light.h"
+
 
 namespace Engine::Renderer {
 	struct RendererDiagnosticInfo {
@@ -18,7 +20,7 @@ namespace Engine::Renderer {
 		static void Init();
 		static void OnWindowResize(unsigned int width, unsigned int height);
 
-		static void BeginFrame(std::shared_ptr<Camera> camera);
+		static void BeginFrame(std::shared_ptr<Camera> camera, std::vector<std::shared_ptr<Light>>& Lights);
 		static void EndFrame();
 		static void Render(std::shared_ptr<Shader> postProcShader);
 		static std::shared_ptr<Texture> GetRender();
@@ -33,9 +35,21 @@ namespace Engine::Renderer {
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 
 	private:
+		struct LightData {
+			std::shared_ptr<ShaderStorageBuffer> m_PointLightStorageBuffer;
+			std::shared_ptr<ShaderStorageBuffer> m_DirectionalLightStorageBuffer;
+			std::shared_ptr<ShaderStorageBuffer> m_SpotLightStorageBuffer;
+			uint32_t LFPointLightCount;
+			uint32_t LFDirectionalLightCount;
+			uint32_t LFSpotLightCount;
+		};
 		struct SceneData {
+			uint32_t m_Width;
+			uint32_t m_Height;
 			std::shared_ptr<Camera> m_Camera;
 			std::shared_ptr<FrameBuffer> m_PostProcFrameBuffer;
+			std::shared_ptr<ShaderStorageBuffer> m_GeneralStorageBuffer;
+			LightData m_LightData;
 			uint32_t PositionBufferIndex;
 			uint32_t NormalBufferIndex;
 			uint32_t ColorSpecBufferIndex;
