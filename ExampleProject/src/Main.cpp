@@ -96,6 +96,11 @@ public:
 		//m_Lights.push_back(Renderer::DirectionalLight::Create({ -1, 0, 0 }));
 	}
 
+	virtual void onDetach() override {
+		m_MainModel.reset();
+		std::cout << "Detached\n";
+	}
+
 	virtual void onUpdate(float delta_time) override { 
 		m_CameraController->OnUpdate(delta_time);
 
@@ -179,7 +184,9 @@ private:
 class App : public Application {
 public:
 	App(int argc, char** argv) : Application(argc, argv) {
-		PushLayer(MainLayer::Create());
+		std::shared_ptr<MainLayer> layer = MainLayer::Create();
+		PushLayer(layer);
+		//PopLayer(layer);
 	}
 	~App() { }
 };

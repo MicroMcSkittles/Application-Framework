@@ -49,6 +49,16 @@ namespace Engine {
 		m_LayerStack.PushOverlay(layer);
 		layer->onAttach();
 	}
+	void Application::PopLayer(std::shared_ptr<Layer> layer)
+	{
+		m_LayerStack.PopLayer(layer);
+		layer->onDetach();
+	}
+	void Application::PopOverlay(std::shared_ptr<Layer> layer)
+	{
+		m_LayerStack.PopOverlay(layer);
+		layer->onDetach();
+	}
 
 	void Application::ShowDiagnostic()
 	{

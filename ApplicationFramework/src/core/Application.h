@@ -47,6 +47,10 @@ namespace Engine {
 		void PushLayer(std::shared_ptr<Layer> layer);
 		// Adds a Layer to the application that gets displayed over all other layers.
 		void PushOverlay(std::shared_ptr<Layer> layer);
+		// Removes a Layer from the application.
+		void PopLayer(std::shared_ptr<Layer> layer);
+		// Removes a Overlay from the application.
+		void PopOverlay(std::shared_ptr<Layer> layer);
 
 		// Returns a reference to the window.
 		inline Window& GetWindow() { return *m_Window; }
