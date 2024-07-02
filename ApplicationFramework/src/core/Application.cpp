@@ -51,13 +51,17 @@ namespace Engine {
 	}
 	void Application::PopLayer(std::shared_ptr<Layer> layer)
 	{
-		m_LayerStack.PopLayer(layer);
-		layer->onDetach();
+		m_PopCommands.push_back({
+			layer,
+			false
+		});
 	}
 	void Application::PopOverlay(std::shared_ptr<Layer> layer)
 	{
-		m_LayerStack.PopOverlay(layer);
-		layer->onDetach();
+		m_PopCommands.push_back({
+			layer,
+			true
+		});
 	}
 
 	void Application::ShowDiagnostic()
@@ -119,6 +123,8 @@ namespace Engine {
 				m_DiagnosticInfo.ImGuiMS = (System::GetTime() - time) * 1000;
 			}
 
+			ExacuteLayerPopCommands();
+
 			if (m_Flags & AppProp_Window_Enabled) m_Window->OnUpdate();
 		}
 	}
@@ -132,5 +138,19 @@ namespace Engine {
 	{
 		Renderer::Renderer::OnWindowResize(e.getWidth(), e.getHeight());
 		return false;
+	}
+	void Application::ExacuteLayerPopCommands()
+	{
+		if (!m_PopCommands.size()) return;
+		for (auto& command : m_PopCommands) {
+			if (command.isOverlay) {
+				m_LayerStack.PopOverlay(command.layer);
+			}
+			else {
+				m_LayerStack.PopLayer(command.layer);
+			}
+			command.layer->onDetach();
+		}
+		m_PopCommands.clear();
 	}
 }

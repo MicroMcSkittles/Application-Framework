@@ -80,6 +80,8 @@ namespace Engine {
 		// On Window Resize event function.
 		bool OnWindowResize(WindowResizeEvent& e);
 
+		void ExacuteLayerPopCommands();
+
 	private:
 		// Main application window.
 		std::unique_ptr<Window> m_Window;
@@ -101,6 +103,16 @@ namespace Engine {
 
 		// Application Diagnostic Information.
 		DiagnosticInfo m_DiagnosticInfo;
+
+		struct PopCommand {
+			std::shared_ptr<Layer> layer;
+			bool isOverlay;
+		};
+		/*
+		Stores a list of all layers that need to be removed
+		to remove the layers in the list call the ExecutePopCommands function
+		*/
+		std::vector<PopCommand> m_PopCommands;
 
 		uint32_t m_Flags;
 
