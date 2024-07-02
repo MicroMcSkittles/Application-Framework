@@ -49,8 +49,11 @@ namespace {
 
 class MainLayer : public Layer {
 public:
-	MainLayer() : Layer("Main Layer") { }
 	~MainLayer() { }
+
+	static std::shared_ptr<MainLayer> Create() {
+		return std::shared_ptr<MainLayer>(new MainLayer());
+	}
 
 	virtual void onAttach() override { 
 		m_MainCamera = Renderer::PerspectiveCamera::Create(
@@ -154,6 +157,9 @@ public:
 	}
 
 private:
+	MainLayer() : Layer("Main Layer") { }
+
+private:
 	std::shared_ptr<Renderer::Camera> m_MainCamera;
 	std::shared_ptr<Renderer::CameraController> m_CameraController;
 	std::shared_ptr<Renderer::Shader> m_PostProcShader;
@@ -173,7 +179,7 @@ private:
 class App : public Application {
 public:
 	App(int argc, char** argv) : Application(argc, argv) {
-		pushLayer(new MainLayer());
+		PushLayer(MainLayer::Create());
 	}
 	~App() { }
 };

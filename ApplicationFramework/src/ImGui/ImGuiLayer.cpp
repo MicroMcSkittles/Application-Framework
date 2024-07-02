@@ -12,6 +12,12 @@
 namespace Engine {
 	ImGuiLayer::ImGuiLayer()
 		: Layer("Engine ImGui Layer") { }
+
+	std::shared_ptr<ImGuiLayer> ImGuiLayer::Create()
+	{
+		return std::shared_ptr<ImGuiLayer>(new ImGuiLayer());
+	}
+
 	void ImGuiLayer::onAttach()
 	{
 		IMGUI_CHECKVERSION();

@@ -5,7 +5,7 @@ namespace Engine {
 	class ImGuiLayer : public Layer
 	{
 	public:
-		ImGuiLayer();
+		static std::shared_ptr<ImGuiLayer> Create();
 
 		virtual void onAttach() override;
 		virtual void onDetach() override;
@@ -16,6 +16,9 @@ namespace Engine {
 		void AddWindowFlag(int flag) { m_WindowFlags |= flag; }
 		void RemoveWindowFlag(int flag) { m_WindowFlags &= ~flag; }
 		void EnableDocking(bool enableDocking) { m_EnableDocking = enableDocking; }
+
+	private:
+		ImGuiLayer();
 
 	private:
 		int m_WindowFlags;

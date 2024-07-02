@@ -5,8 +5,9 @@
 #include <iostream>
 
 namespace Engine {
-	Application::Application(int argc, char** argv)
+	Application::Application(int argc, char** argv, uint32_t PropFlags)
 	{
+		m_Flags = PropFlags;
 		m_Argc = argc;
 		m_Argv = argv;
 		if (s_Instance) {
@@ -16,16 +17,21 @@ namespace Engine {
 		s_Instance = this;
 
 
-		m_Window = Window::Create();
-		m_Window->SetEventCallback(BIND_EVENT_FN(Application::ProcEvent));
+		if(m_Flags & AppProp_Window_Enabled) {
+			m_Window = Window::Create();
+			m_Window->SetEventCallback(BIND_EVENT_FN(Application::ProcessEvent));
+		}
 
-		Renderer::Renderer::Init();
-		
+		if (m_Flags & AppProp_Renderer_Enabled) {
+			Renderer::Renderer::Init();
+		}
+
+		if (m_Flags & AppProp_ImGui_Enabled) {
+			m_ImGuiLayer = ImGuiLayer::Create();
+			PushOverlay(m_ImGuiLayer);
+		}
+
 		m_Running = true;
-
-		m_ImGuiLayer = new ImGuiLayer();
-		pushOverlay(m_ImGuiLayer);
-
 		last_frame_time = System::GetTime();
 	}
 	Application::~Application()
@@ -33,14 +39,14 @@ namespace Engine {
 
 	}
 
-	void Application::pushLayer(Layer * layer)
+	void Application::PushLayer(std::shared_ptr<Layer> layer)
 	{
-		m_LayerStack.pushLayer(layer);
+		m_LayerStack.PushLayer(layer);
 		layer->onAttach();
 	}
-	void Application::pushOverlay(Layer * layer)
+	void Application::PushOverlay(std::shared_ptr<Layer> layer)
 	{
-		m_LayerStack.pushOverlay(layer);
+		m_LayerStack.PushOverlay(layer);
 		layer->onAttach();
 	}
 
@@ -55,7 +61,7 @@ namespace Engine {
 		ImGui::End();
 	}
 
-	void Application::ProcEvent(Event & e)
+	void Application::ProcessEvent(Event & e)
 	{
 		EventDispatcher eventDispatcher(e);
 		eventDispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
@@ -69,7 +75,7 @@ namespace Engine {
 		}
 	}
 
-	void Application::run()
+	void Application::Run()
 	{
 		while (m_Running) {
 			float time = System::GetTime();
@@ -79,27 +85,31 @@ namespace Engine {
 			m_DiagnosticInfo.FPS = 1 / delta_time;
 
 			time = System::GetTime();
-			for (Layer* layer : m_LayerStack) {
+			for (std::shared_ptr<Layer> layer : m_LayerStack) {
 				layer->onUpdate(delta_time);
 			}
 			m_DiagnosticInfo.UpdateMS = (System::GetTime() - time) * 1000;
 
-			time = System::GetTime();
-			for (Layer* layer : m_LayerStack) {
-				layer->onRender();
+			if (m_Flags & AppProp_Renderer_Enabled) {
+				time = System::GetTime();
+				for (std::shared_ptr<Layer> layer : m_LayerStack) {
+					layer->onRender();
+				}
+				m_DiagnosticInfo.RendererMS = (System::GetTime() - time) * 1000;
+				Renderer::Renderer::GetDiagnostic().Milliseconds = m_DiagnosticInfo.RendererMS;
 			}
-			m_DiagnosticInfo.RendererMS = (System::GetTime() - time) * 1000;
-			Renderer::Renderer::GetDiagnostic().Milliseconds = m_DiagnosticInfo.RendererMS;
 
-			time = System::GetTime();
-			m_ImGuiLayer->Begin();
-			for (Layer* layer : m_LayerStack) {
-				layer->onImGuiRender();
+			if (m_Flags & AppProp_ImGui_Enabled) {
+				time = System::GetTime();
+				m_ImGuiLayer->Begin();
+				for (std::shared_ptr<Layer> layer : m_LayerStack) {
+					layer->onImGuiRender();
+				}
+				m_ImGuiLayer->End();
+				m_DiagnosticInfo.ImGuiMS = (System::GetTime() - time) * 1000;
 			}
-			m_ImGuiLayer->End();
-			m_DiagnosticInfo.ImGuiMS = (System::GetTime() - time) * 1000;
 
-			m_Window->OnUpdate();
+			if (m_Flags & AppProp_Window_Enabled) m_Window->OnUpdate();
 		}
 	}
 

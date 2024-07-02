@@ -11,21 +11,21 @@ namespace Engine {
 		virtual ~LayerStack();
 
 		// Adds layer to vector.
-		void pushLayer(Layer* layer);
+		void PushLayer(std::shared_ptr<Layer> layer);
 		// Adds layer on top of vector.
-		void pushOverlay(Layer* layer);
+		void PushOverlay(std::shared_ptr<Layer> layer);
 		// Removes layer from vector.
-		void popLayer(Layer* layer);
+		void PopLayer(std::shared_ptr<Layer> layer);
 		// Removes layer from vector.
-		void popOverlay(Layer* layer);
+		void PopOverlay(std::shared_ptr<Layer> layer);
 
 		// Returns the begining of vector.
-		std::vector<Layer*>::iterator begin() { return m_Layers.begin(); }
+		std::vector<std::shared_ptr<Layer>>::iterator begin() { return m_Layers.begin(); }
 		// Returns the end of vector.
-		std::vector<Layer*>::iterator end() { return m_Layers.end(); }
+		std::vector<std::shared_ptr<Layer>>::iterator end() { return m_Layers.end(); }
 	private:
 		// The Layer vector.
-		std::vector<Layer*> m_Layers;
+		std::vector<std::shared_ptr<Layer>> m_Layers;
 		// Used to insert overlays.
 		int m_LayerInstertIndex;
 	};
