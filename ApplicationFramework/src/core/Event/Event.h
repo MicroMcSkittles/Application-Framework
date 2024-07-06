@@ -13,6 +13,7 @@ namespace Engine {
 		KeyPressed, KeyReleased,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScolled
 	};
+	constexpr uint32_t EventTypeLength = (uint32_t)EventType::MouseScolled;
 
 	enum EventCategory {
 		None = 0,
@@ -23,8 +24,8 @@ namespace Engine {
 		EventCategoryMouseButton = BIT(4)
 	};
 
-#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type; } \
-								virtual EventType GetEventType() const override { return GetStaticType(); } \
+#define EVENT_CLASS_TYPE(type) static uint32_t GetStaticType() { return ##type; } \
+								virtual uint32_t GetEventType() const override { return GetStaticType(); } \
 								virtual const char* GetName() const override { return #type; }
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
@@ -34,7 +35,7 @@ namespace Engine {
 	class Event {
 		friend EventDispatcher;
 	public:
-		virtual EventType GetEventType() const = 0;
+		virtual uint32_t GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
 		virtual std::string ToString() const { return GetName(); }

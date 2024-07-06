@@ -25,7 +25,7 @@ namespace Engine {
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(MouseButtonPressed)
+		EVENT_CLASS_TYPE((uint32_t)EventType::MouseButtonPressed)
 	};
 	class MouseButtonReleasedEvent : public MouseButtonEvent {
 	public:
@@ -38,7 +38,7 @@ namespace Engine {
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(MouseButtonReleased)
+		EVENT_CLASS_TYPE((uint32_t)EventType::MouseButtonReleased)
 	};
 
 	class MouseMovedEvent : public Event {
@@ -56,7 +56,7 @@ namespace Engine {
 		}
 
 		EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryMouse)
-		EVENT_CLASS_TYPE(MouseMoved)
+		EVENT_CLASS_TYPE((uint32_t)EventType::MouseMoved)
 	private:
 		unsigned int m_X;
 		unsigned int m_Y;
@@ -77,7 +77,7 @@ namespace Engine {
 		}
 
 		EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryMouse)
-		EVENT_CLASS_TYPE(MouseScolled)
+		EVENT_CLASS_TYPE((uint32_t)EventType::MouseScolled)
 	private:
 		float m_X;
 		float m_Y;

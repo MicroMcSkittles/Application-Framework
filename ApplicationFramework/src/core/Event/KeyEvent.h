@@ -28,7 +28,7 @@ namespace Engine {
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(KeyPressed)
+		EVENT_CLASS_TYPE((uint32_t)EventType::KeyPressed)
 	private:
 		int m_RepeatCount;
 	};
@@ -43,6 +43,6 @@ namespace Engine {
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(KeyReleased)
+		EVENT_CLASS_TYPE((uint32_t)EventType::KeyReleased)
 	};
 }

@@ -8,21 +8,21 @@ namespace Engine {
 		WindowCloseEvent() {}
 
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
-		EVENT_CLASS_TYPE(WindowClose)
+		EVENT_CLASS_TYPE((uint32_t)EventType::WindowClose)
 	};
 	class WindowFocusEvent : public Event {
 	public:
 		WindowFocusEvent() {}
 
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
-		EVENT_CLASS_TYPE(WindowFocus)
+		EVENT_CLASS_TYPE((uint32_t)EventType::WindowFocus)
 	};
 	class WindowLostFocusEvent : public Event {
 	public:
 		WindowLostFocusEvent() {}
 
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
-		EVENT_CLASS_TYPE(WindowLostFocus)
+		EVENT_CLASS_TYPE((uint32_t)EventType::WindowLostFocus)
 	};
 	class WindowResizeEvent : public Event {
 	public:
@@ -39,7 +39,7 @@ namespace Engine {
 		unsigned int getHeight() { return m_Height; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
-		EVENT_CLASS_TYPE(WindowResize)
+		EVENT_CLASS_TYPE((uint32_t)EventType::WindowResize)
 	private:
 		unsigned int m_Width;
 		unsigned int m_Height;

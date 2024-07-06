@@ -186,7 +186,6 @@ public:
 	App(int argc, char** argv) : Application(argc, argv) {
 		std::shared_ptr<MainLayer> layer = MainLayer::Create();
 		PushLayer(layer);
-		PopLayer(layer);
 	}
 	~App() { }
 };
