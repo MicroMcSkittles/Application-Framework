@@ -67,6 +67,13 @@ namespace Engine::Renderer {
 		virtual void recalculateProjection() override;
 		virtual void recalculateView() override;
 		virtual void displayImGui() override;
+
+		void setWidth(float width) { m_Width = width; }
+		void setHeight(float height) { m_Height = height; }
+		void setFov(float fov) { m_Fov = fov; }
+		void setNearPlane(float nearPlane) { m_NearPlane = nearPlane; }
+		void setFarPlane(float farPlane) { m_FarPlane = farPlane; }
+
 	private:
 		PerspectiveCamera(float width, float height, float fov, float near_plane, float far_plane);
 	
