@@ -10,6 +10,15 @@ namespace Engine::Renderer {
 		m_Meshes = meshes;
 		m_Directory = directory;
 	}
+	Model::~Model()
+	{
+		m_Meshes.clear();
+		m_Materials.clear();
+		m_Textures.clear();
+		m_TextureHandles.clear();
+		m_MaterialSSB.reset();
+		m_TextureSSB.reset();
+	}
 
 	void Model::PushTexture(std::shared_ptr<Texture2D> texture)
 	{

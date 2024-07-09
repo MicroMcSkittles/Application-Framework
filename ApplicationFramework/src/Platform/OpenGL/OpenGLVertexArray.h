@@ -7,6 +7,7 @@ namespace Engine::Renderer {
 		{
 		public:
 			OpenGLVertexArray();
+			~OpenGLVertexArray();
 
 			virtual void Bind() const override;
 			virtual void Unbind() const override;

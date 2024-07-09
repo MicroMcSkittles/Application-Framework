@@ -8,6 +8,7 @@ namespace Engine::Renderer {
 	{
 	public:
 		static std::shared_ptr<Model> Create(const std::vector<std::shared_ptr<Mesh>>& meshes, const std::string& directory = "");
+		~Model();
 
 		const std::vector<std::shared_ptr<Mesh>>& GetMeshes() const { return m_Meshes; }
 		const std::vector<Material>& GetMaterials() const { return m_Materials; }

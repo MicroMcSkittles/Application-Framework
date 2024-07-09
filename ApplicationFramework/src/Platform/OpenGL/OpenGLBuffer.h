@@ -6,6 +6,7 @@ namespace Engine::Renderer {
 		class OpenGLVertexBuffer : public VertexBuffer {
 		public:
 			OpenGLVertexBuffer(float* vertices, uint32_t size);
+			~OpenGLVertexBuffer();
 
 			virtual void Bind() const override;
 			virtual void Unbind() const override;
@@ -21,6 +22,7 @@ namespace Engine::Renderer {
 		class OpenGLIndexBuffer : public IndexBuffer {
 		public:
 			OpenGLIndexBuffer(uint32_t* indices, uint32_t size);
+			~OpenGLIndexBuffer();
 
 			virtual void Bind() const override;
 			virtual void Unbind() const override;

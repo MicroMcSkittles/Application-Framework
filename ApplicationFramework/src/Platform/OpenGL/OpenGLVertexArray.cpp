@@ -30,6 +30,13 @@ namespace Engine::Renderer {
 			glBindVertexArray(m_RenderID);
 		}
 
+		OpenGLVertexArray::~OpenGLVertexArray()
+		{
+			m_VertexBuffers.clear();
+			m_IndexBuffer.reset();
+			glDeleteVertexArrays(1, &m_RenderID);
+		}
+
 		void OpenGLVertexArray::Bind() const
 		{
 			glBindVertexArray(m_RenderID);

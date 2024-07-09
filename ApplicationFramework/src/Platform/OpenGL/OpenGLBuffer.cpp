@@ -13,6 +13,11 @@ namespace Engine::Renderer {
 			glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 		}
 
+		OpenGLVertexBuffer::~OpenGLVertexBuffer()
+		{
+			glDeleteBuffers(1, &m_RenderID);
+		}
+
 		void OpenGLVertexBuffer::Bind() const
 		{
 			glBindBuffer(GL_ARRAY_BUFFER, m_RenderID);
@@ -39,6 +44,10 @@ namespace Engine::Renderer {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RenderID);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
 			m_Count = size / sizeof(uint32_t);
+		}
+		OpenGLIndexBuffer::~OpenGLIndexBuffer()
+		{
+			glDeleteBuffers(1, &m_RenderID);
 		}
 
 		void OpenGLIndexBuffer::Bind() const

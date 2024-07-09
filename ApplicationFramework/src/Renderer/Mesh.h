@@ -11,6 +11,7 @@ namespace Engine::Renderer {
 			const BufferLayout& vertex_layout = { {ShaderDataType::Float3, "aPos"} });
 		static std::shared_ptr<Mesh> Create(float* vertex_list, uint32_t vertex_list_size, uint32_t* index_list, uint32_t index_list_size,
 			const BufferLayout& vertex_layout = { {ShaderDataType::Float3, "aPos"} });
+		~Mesh();
 
 		std::shared_ptr<VertexArray> GetVAO() const { return m_VAO; }
 		const std::vector<float>& GetVertexList() const { return m_VertexList; }

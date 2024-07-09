@@ -6,7 +6,7 @@
 namespace Engine::Renderer {
 	std::shared_ptr<Texture2D> Texture2D::Create(const TextureProps & props, bool CheckHandler)
 	{
-		if (TextureHandler::HasTexture(props.Path) && CheckHandler) return std::dynamic_pointer_cast<Texture2D>(TextureHandler::GetTexture(props.Path));
+		//if (TextureHandler::HasTexture(props.Path) && CheckHandler) return std::dynamic_pointer_cast<Texture2D>(TextureHandler::GetTexture(props.Path));
 
 		std::shared_ptr<Texture2D> texture;
 
@@ -14,8 +14,8 @@ namespace Engine::Renderer {
 		case RendererAPI::API::OpenGL: texture = std::shared_ptr<Texture2D>(new OpenGL::OpenGLTexture2D(props.Path, props));
 		}
 
-		if (TextureHandler::HasTexture(props.Path)) TextureHandler::SetTexture(props.Path, texture);
-		else  TextureHandler::RegTexture(texture, props.Path);
+		//if (TextureHandler::HasTexture(props.Path)) TextureHandler::SetTexture(props.Path, texture);
+		//else  TextureHandler::RegTexture(texture, props.Path);
 		return texture;
 	}
 	std::shared_ptr<Texture2D> Texture2D::Create(uint32_t width, uint32_t height, const TextureProps & props)

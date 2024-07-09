@@ -10,6 +10,7 @@ namespace Engine::Renderer {
 		return std::shared_ptr<Mesh>(new Mesh(vertex_list, vertex_list_size, index_list, index_list_size, vertex_layout));
 	}
 
+
 	Mesh::Mesh(const std::vector<float>& vertex_list, const std::vector<uint32_t>& index_list, const BufferLayout& vertex_layout)
 	{
 		m_VertexList = vertex_list;
@@ -25,6 +26,12 @@ namespace Engine::Renderer {
 		m_VertexLayput = vertex_layout;
 
 		InitMesh();
+	}
+	Mesh::~Mesh()
+	{
+		m_IndexList.clear();
+		m_VertexList.clear();
+		m_VAO.reset();
 	}
 
 	void Mesh::InitMesh()
