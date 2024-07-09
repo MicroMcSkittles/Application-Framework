@@ -113,7 +113,6 @@ namespace Engine {
 		to remove the layers in the list call the ExecutePopCommands function
 		*/
 		std::vector<LayerCommand> m_PopCommands;
-		std::vector<LayerCommand> m_PushCommands;
 
 		uint32_t m_Flags;
 

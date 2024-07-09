@@ -41,17 +41,13 @@ namespace Engine {
 
 	void Application::PushLayer(std::shared_ptr<Layer> layer)
 	{
-		m_PushCommands.push_back({
-			layer,
-			false
-		});
+		m_LayerStack.PushLayer(layer);
+		layer->onAttach();
 	}
 	void Application::PushOverlay(std::shared_ptr<Layer> layer)
 	{
-		m_PushCommands.push_back({
-			layer,
-			true
-		});
+		m_LayerStack.PushOverlay(layer);
+		layer->onAttach();
 	}
 	void Application::PopLayer(std::shared_ptr<Layer> layer)
 	{
@@ -145,7 +141,7 @@ namespace Engine {
 	}
 	void Application::ExacuteLayerCommands()
 	{
-		if (!m_PopCommands.size() && !m_PushCommands.size()) return;
+		if (!m_PopCommands.size()) return;
 		for (auto& command : m_PopCommands) {
 			if (command.isOverlay) {
 				m_LayerStack.PopOverlay(command.layer);
@@ -156,16 +152,5 @@ namespace Engine {
 			command.layer->onDetach();
 		}
 		m_PopCommands.clear();
-
-		for (auto& command : m_PushCommands) {
-			if (command.isOverlay) {
-				m_LayerStack.PushOverlay(command.layer);
-			}
-			else {
-				m_LayerStack.PushLayer(command.layer);
-			}
-			command.layer->onAttach();
-		}
-		m_PushCommands.clear();
 	}
 }
