@@ -3,19 +3,19 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Engine::Renderer {
-	std::shared_ptr<Shader> Shader::Create(std::string vertexPath, std::string fragmentPath)
+	std::shared_ptr<Shader> Shader::Create(std::string vertexPath, std::string fragmentPath, bool isSource)
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::OpenGL: return std::shared_ptr<Shader>(new OpenGL::OpenGLShader(vertexPath, fragmentPath));
+		case RendererAPI::API::OpenGL: return std::shared_ptr<Shader>(new OpenGL::OpenGLShader(vertexPath, fragmentPath, isSource));
 		}
 		return std::shared_ptr<Shader>();
 	}
-	std::shared_ptr<Shader> Shader::Create(std::string vertexPath, std::string geometryPath, std::string fragmentPath)
+	std::shared_ptr<Shader> Shader::Create(std::string vertexPath, std::string geometryPath, std::string fragmentPath, bool isSource)
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::OpenGL: return std::shared_ptr<Shader>(new OpenGL::OpenGLShader(vertexPath, geometryPath, fragmentPath));
+		case RendererAPI::API::OpenGL: return std::shared_ptr<Shader>(new OpenGL::OpenGLShader(vertexPath, geometryPath, fragmentPath, isSource));
 		}
 		return std::shared_ptr<Shader>();
 	}

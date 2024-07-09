@@ -41,13 +41,17 @@ namespace Engine {
 
 	void Application::PushLayer(std::shared_ptr<Layer> layer)
 	{
-		m_LayerStack.PushLayer(layer);
-		layer->onAttach();
+		m_PushCommands.push_back({
+			layer,
+			false
+		});
 	}
 	void Application::PushOverlay(std::shared_ptr<Layer> layer)
 	{
-		m_LayerStack.PushOverlay(layer);
-		layer->onAttach();
+		m_PushCommands.push_back({
+			layer,
+			true
+		});
 	}
 	void Application::PopLayer(std::shared_ptr<Layer> layer)
 	{
@@ -98,6 +102,8 @@ namespace Engine {
 			m_DiagnosticInfo.MS = delta_time * 1000;
 			m_DiagnosticInfo.FPS = 1 / delta_time;
 
+			ExacuteLayerCommands();
+
 			time = System::GetTime();
 			for (std::shared_ptr<Layer> layer : m_LayerStack) {
 				layer->onUpdate(delta_time);
@@ -123,8 +129,6 @@ namespace Engine {
 				m_DiagnosticInfo.ImGuiMS = (System::GetTime() - time) * 1000;
 			}
 
-			ExacuteLayerPopCommands();
-
 			if (m_Flags & AppProp_Window_Enabled) m_Window->OnUpdate();
 		}
 	}
@@ -139,9 +143,9 @@ namespace Engine {
 		Renderer::Renderer::OnWindowResize(e.getWidth(), e.getHeight());
 		return false;
 	}
-	void Application::ExacuteLayerPopCommands()
+	void Application::ExacuteLayerCommands()
 	{
-		if (!m_PopCommands.size()) return;
+		if (!m_PopCommands.size() && !m_PushCommands.size()) return;
 		for (auto& command : m_PopCommands) {
 			if (command.isOverlay) {
 				m_LayerStack.PopOverlay(command.layer);
@@ -152,5 +156,16 @@ namespace Engine {
 			command.layer->onDetach();
 		}
 		m_PopCommands.clear();
+
+		for (auto& command : m_PushCommands) {
+			if (command.isOverlay) {
+				m_LayerStack.PushOverlay(command.layer);
+			}
+			else {
+				m_LayerStack.PushLayer(command.layer);
+			}
+			command.layer->onAttach();
+		}
+		m_PushCommands.clear();
 	}
 }

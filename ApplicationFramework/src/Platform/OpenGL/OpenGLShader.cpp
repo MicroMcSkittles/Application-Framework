@@ -200,13 +200,13 @@ namespace Engine::Renderer {
 			return src;
 		}
 
-		OpenGLShader::OpenGLShader(std::string vertexPath, std::string fragmentPath)
+		OpenGLShader::OpenGLShader(std::string vertexPath, std::string fragmentPath, bool isSource)
 		{
 			std::filesystem::path p(vertexPath);
 			m_Name = p.stem().string();
 
-			std::string vertexSourceCode = loadFromFile(vertexPath);
-			std::string fragmentSourceCode =  loadFromFile(fragmentPath);
+			std::string vertexSourceCode = (isSource) ? vertexPath : loadFromFile(vertexPath);
+			std::string fragmentSourceCode = (isSource) ? fragmentPath : loadFromFile(fragmentPath);
 
 			vertexSourceCode = preprocSource(vertexSourceCode);
 			fragmentSourceCode = preprocSource(fragmentSourceCode);
@@ -263,14 +263,14 @@ namespace Engine::Renderer {
 			Logger::LogInfo("Successfully loaded shader!");
 			return;
 		}
-		OpenGLShader::OpenGLShader(std::string vertexPath, std::string geometryPath, std::string fragmentPath)
+		OpenGLShader::OpenGLShader(std::string vertexPath, std::string geometryPath, std::string fragmentPath, bool isSource)
 		{
 			std::filesystem::path p(vertexPath);
 			m_Name = p.stem().string();
 
-			std::string vertexSourceCode = loadFromFile(vertexPath);
-			std::string geometrySourceCode = loadFromFile(geometryPath);
-			std::string fragmentSourceCode = loadFromFile(fragmentPath);
+			std::string vertexSourceCode = (isSource) ? vertexPath : loadFromFile(vertexPath);
+			std::string geometrySourceCode = (isSource) ? geometryPath : loadFromFile(geometryPath);
+			std::string fragmentSourceCode = (isSource) ? fragmentPath : loadFromFile(fragmentPath);
 
 			vertexSourceCode = preprocSource(vertexSourceCode);
 			geometrySourceCode = preprocSource(geometrySourceCode);

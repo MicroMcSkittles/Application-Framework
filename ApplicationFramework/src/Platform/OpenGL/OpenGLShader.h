@@ -31,8 +31,8 @@ namespace Engine::Renderer {
 		class OpenGLShader : public Shader
 		{
 		public:
-			OpenGLShader(std::string vertexPath, std::string fragmentPath);
-			OpenGLShader(std::string vertexPath, std::string geometryPath, std::string fragmentPath);
+			OpenGLShader(std::string vertexPath, std::string fragmentPath, bool isSource);
+			OpenGLShader(std::string vertexPath, std::string geometryPath, std::string fragmentPath, bool isSource);
 
 			virtual void Bind() override;
 			virtual void Unbind() override;

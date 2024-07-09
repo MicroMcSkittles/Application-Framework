@@ -17,7 +17,9 @@ namespace Engine::Renderer {
 		virtual void SetUniform(std::string name, std::shared_ptr<UniformData> v) = 0;
 		virtual std::vector<Uniform>& GetUniforms() = 0;
 
-		static std::shared_ptr<Shader> Create(std::string vertexPath, std::string fragmentPath);
-		static std::shared_ptr<Shader> Create(std::string vertexPath, std::string geometryPath, std::string fragmentPath);
+		// Set isSource to true to pass in the shaders source as a string
+		static std::shared_ptr<Shader> Create(std::string vertexPath, std::string fragmentPath, bool isSource = false);
+		// Set isSource to true to pass in the shaders source as a string
+		static std::shared_ptr<Shader> Create(std::string vertexPath, std::string geometryPath, std::string fragmentPath, bool isSource = false);
 	};
 }
