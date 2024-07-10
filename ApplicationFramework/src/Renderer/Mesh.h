@@ -17,6 +17,8 @@ namespace Engine::Renderer {
 		const std::vector<float>& GetVertexList() const { return m_VertexList; }
 		const std::vector<uint32_t>& GetIndexList() const { return m_IndexList; }
 
+		const std::string& GetName() const { return m_Name; }
+
 	private:
 		Mesh(const std::vector<float>& vertex_list, const std::vector<uint32_t>& index_list, const std::string& name, const BufferLayout& vertex_layout);
 		Mesh(float* vertex_list, uint32_t vertex_list_size, uint32_t* index_list, uint32_t index_list_size, const std::string& name, const BufferLayout& vertex_layout);
