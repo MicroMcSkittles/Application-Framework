@@ -61,7 +61,7 @@ namespace Engine::AssetLoader {
                 }
                 index_offset += fv;
             }
-            meshes.push_back(Renderer::Mesh::Create(vertices, indices, VertexLayout));
+            meshes.push_back(Renderer::Mesh::Create(vertices, indices, shape.name, VertexLayout));
         }
 
         std::shared_ptr<Renderer::Model> model = Renderer::Model::Create(meshes, path);
@@ -232,7 +232,7 @@ namespace Engine::AssetLoader {
             index_offset += fv;
         }
 
-        std::shared_ptr<Renderer::Mesh> mesh = Renderer::Mesh::Create(vertices, indices, VertexLayout);
+        std::shared_ptr<Renderer::Mesh> mesh;// = Renderer::Mesh::Create(vertices, indices, VertexLayout);
 
         
 

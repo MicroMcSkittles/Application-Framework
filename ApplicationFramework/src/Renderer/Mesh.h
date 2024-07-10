@@ -7,9 +7,9 @@ namespace Engine::Renderer {
 	class Mesh
 	{
 	public:
-		static std::shared_ptr<Mesh> Create(const std::vector<float>& vertex_list, const std::vector<uint32_t>& index_list, 
+		static std::shared_ptr<Mesh> Create(const std::vector<float>& vertex_list, const std::vector<uint32_t>& index_list, const std::string& name = "",
 			const BufferLayout& vertex_layout = { {ShaderDataType::Float3, "aPos"} });
-		static std::shared_ptr<Mesh> Create(float* vertex_list, uint32_t vertex_list_size, uint32_t* index_list, uint32_t index_list_size,
+		static std::shared_ptr<Mesh> Create(float* vertex_list, uint32_t vertex_list_size, uint32_t* index_list, uint32_t index_list_size, const std::string& name = "",
 			const BufferLayout& vertex_layout = { {ShaderDataType::Float3, "aPos"} });
 		~Mesh();
 
@@ -18,12 +18,14 @@ namespace Engine::Renderer {
 		const std::vector<uint32_t>& GetIndexList() const { return m_IndexList; }
 
 	private:
-		Mesh(const std::vector<float>& vertex_list, const std::vector<uint32_t>& index_list, const BufferLayout& vertex_layout);
-		Mesh(float* vertex_list, uint32_t vertex_list_size, uint32_t* index_list, uint32_t index_list_size, const BufferLayout& vertex_layout);
+		Mesh(const std::vector<float>& vertex_list, const std::vector<uint32_t>& index_list, const std::string& name, const BufferLayout& vertex_layout);
+		Mesh(float* vertex_list, uint32_t vertex_list_size, uint32_t* index_list, uint32_t index_list_size, const std::string& name, const BufferLayout& vertex_layout);
 
 		void InitMesh();
 
 	private:
+		std::string m_Name;
+
 		std::vector<float> m_VertexList;
 		std::vector<uint32_t> m_IndexList;
 
