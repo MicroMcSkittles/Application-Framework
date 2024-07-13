@@ -4,10 +4,10 @@
 namespace Engine::Renderer {
 	
 
-	OrthographicCamera::OrthographicCamera(float width, float height, float near, float far)
-		:m_Width(width), m_Height(height), m_AspectRatio(width / height), m_NearPlane(near), m_FarPlane(far), m_ZoomLevel(1)
+	OrthographicCamera::OrthographicCamera(float width, float height, float near, float far, float zoom)
+		:m_Width(width), m_Height(height), m_AspectRatio(width / height), m_NearPlane(near), m_FarPlane(far), m_Zoom(zoom)
 	{
-		m_Projection = glm::ortho(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, m_NearPlane, m_FarPlane);
+		m_Projection = glm::ortho(-m_AspectRatio * m_Zoom, m_AspectRatio * m_Zoom, -m_Zoom, m_Zoom, m_NearPlane, m_FarPlane);
 		recalculateView();
 	}
 	void OrthographicCamera::onResize(int width, int height)
@@ -19,7 +19,7 @@ namespace Engine::Renderer {
 	}
 	void OrthographicCamera::recalculateProjection()
 	{
-		m_Projection = glm::ortho(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, -1000.0f, 1000.0f);
+		m_Projection = glm::ortho(-m_AspectRatio * m_Zoom, m_AspectRatio * m_Zoom, -m_Zoom, m_Zoom, m_NearPlane, m_FarPlane);
 		m_InvProjection = glm::inverse(m_Projection);
 		m_ViewProjection = m_Projection * m_View;
 	}

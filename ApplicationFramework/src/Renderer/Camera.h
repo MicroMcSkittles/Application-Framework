@@ -37,22 +37,36 @@ namespace Engine::Renderer {
 
 	class OrthographicCamera : public Camera {
 	public:
-		static std::shared_ptr<OrthographicCamera> Create(float width, float height, float near, float far) {
-			return std::shared_ptr<OrthographicCamera>(new OrthographicCamera(width, height, near, far));
+		// The larger the zoom value the more zoomed out the image will be
+		static std::shared_ptr<OrthographicCamera> Create(float width, float height, float near, float far, float zoom) {
+			return std::shared_ptr<OrthographicCamera>(new OrthographicCamera(width, height, near, far, zoom));
 		}
 
 		virtual void onResize(int width, int height) override;
 		virtual void recalculateProjection() override;
 		virtual void recalculateView() override;
 		virtual void displayImGui() override;
+
+		void setWidth(float width) { m_Width = width; }
+		void setHeight(float height) { m_Height = height; }
+		void setZoom(float zoom) { m_Zoom = zoom; }
+		void setNearPlane(float nearPlane) { m_NearPlane = nearPlane; }
+		void setFarPlane(float farPlane) { m_FarPlane = farPlane; }
+
+		float& getWidth() { return m_Width; }
+		float& getHeight() { return m_Height; }
+		float& getZoom() { return m_Zoom; }
+		float& getNearPlane() { return m_NearPlane; }
+		float& getFarPlane() { return m_FarPlane; }
+
 	private:
-		OrthographicCamera(float width, float height, float near, float far);
+		OrthographicCamera(float width, float height, float near, float far, float zoom);
 
 	private:
 		float m_Width;
 		float m_Height;
 		float m_AspectRatio;
-		float m_ZoomLevel;
+		float m_Zoom;
 		float m_NearPlane;
 		float m_FarPlane;
 	};
@@ -73,6 +87,12 @@ namespace Engine::Renderer {
 		void setFov(float fov) { m_Fov = fov; }
 		void setNearPlane(float nearPlane) { m_NearPlane = nearPlane; }
 		void setFarPlane(float farPlane) { m_FarPlane = farPlane; }
+
+		float getWidth() { return m_Width; }
+		float getHeight() { return m_Height; }
+		float getFov() { return m_Fov; }
+		float getNearPlane() { return m_NearPlane; }
+		float getFarPlane() { return m_FarPlane; }
 
 	private:
 		PerspectiveCamera(float width, float height, float fov, float near_plane, float far_plane);

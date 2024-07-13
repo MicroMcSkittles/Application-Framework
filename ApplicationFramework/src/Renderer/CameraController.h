@@ -1,5 +1,7 @@
 #pragma once
 #include "Camera.h"
+#include "core/Event/Event.h"
+#include "core/Event/MouseEvent.h"
 
 namespace Engine::Renderer {
 	class CameraController
@@ -23,5 +25,23 @@ namespace Engine::Renderer {
 		glm::vec2 m_LastMousePos = { 0.0f, 0.0f };
 		float m_Speed = 5.0f;
 		float m_Sensitivity = 2.f;
+	};
+
+	class CameraController2D {
+	public:
+		static std::shared_ptr<CameraController2D> Create(std::shared_ptr<Camera> camera, float speed)
+		{
+			return std::shared_ptr<CameraController2D>(new CameraController2D(camera, speed));
+		}
+
+		void OnUpdate(float delta_time);
+
+	private:
+		CameraController2D(std::shared_ptr<Camera> camera, float speed);
+
+	private:
+		std::shared_ptr<Camera> m_Camera;
+
+		float m_Speed = 5.0f;
 	};
 };

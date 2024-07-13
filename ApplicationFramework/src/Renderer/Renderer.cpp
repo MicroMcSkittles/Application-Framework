@@ -4,35 +4,36 @@
 
 namespace Engine::Renderer {
 	namespace {
-		float postProc_Vertex_List[] = {
+		float Quad_Vertex_List[] = {
 			-1,-1,0,0,
 			1,-1,1,0,
 			-1,1,0,1,
 			1,1,1,1
 		};
-		uint32_t postProc_Index_List[] = {
+		uint32_t Quad_Index_List[] = {
 			0,1,2,
 			3,2,1
 		};
 
-		std::shared_ptr<VertexArray> s_PostProcQuad;
+		std::shared_ptr<VertexArray> s_Quad;
 
-		void initPostProc() {
-			std::shared_ptr<VertexBuffer> vbo = VertexBuffer::Create(postProc_Vertex_List, sizeof(postProc_Vertex_List));
+		void initQuad() {
+			std::shared_ptr<VertexBuffer> vbo = VertexBuffer::Create(Quad_Vertex_List, sizeof(Quad_Vertex_List));
 			vbo->SetLayout({ {ShaderDataType::Float2, "aPos"},
 							{ShaderDataType::Float2, "aTexCoord"} });
-			std::shared_ptr<IndexBuffer> ebo = IndexBuffer::Create(postProc_Index_List, sizeof(postProc_Index_List));
+			std::shared_ptr<IndexBuffer> ebo = IndexBuffer::Create(Quad_Index_List, sizeof(Quad_Index_List));
 		
-			s_PostProcQuad = VertexArray::Create();
-			s_PostProcQuad->AddVertexBuffer(vbo);
-			s_PostProcQuad->SetIndexBuffer(ebo);
+			s_Quad = VertexArray::Create();
+			s_Quad->AddVertexBuffer(vbo);
+			s_Quad->SetIndexBuffer(ebo);
 		}
 	}
 
 	void Renderer::Init()
 	{
 		RenderCommand::Init();
-		initPostProc();
+		Renderer2D::Init();
+		initQuad();
 
 		TextureProps PositionBuffer, NormalBuffer, ColorSpecularBuffer;
 
@@ -56,6 +57,8 @@ namespace Engine::Renderer {
 		m_Data.m_PostProcFrameBuffer->Resize(width, height);
 		RenderCommand::SetViewport(0, 0, width, height);
 		if(m_Data.m_Camera && width != 0 && height != 0) m_Data.m_Camera->onResize(width, height);
+	
+		Renderer2D::OnWindowResize(width, height);
 	}
 
 	void Renderer::BeginFrame(std::shared_ptr<Camera> camera, std::vector<std::shared_ptr<Light>>& Lights)
@@ -124,7 +127,7 @@ namespace Engine::Renderer {
 		postProcShader->Bind();
 		postProcShader->SetUniform("FrameTexture", UDTexture::Create(m_Data.m_PostProcFrameBuffer->GetTexture(m_Data.ColorSpecBufferIndex)));
 		postProcShader->SetUniform("Resolution", UDVec2::Create(m_Data.m_PostProcFrameBuffer->GetSize()));
-		RenderCommand::DrawIndexed(s_PostProcQuad);
+		RenderCommand::DrawIndexed(s_Quad);
 		postProcShader->Unbind();
 	}
 
@@ -173,5 +176,102 @@ namespace Engine::Renderer {
 		ImGui::Text("Number Draw Calls: %d", m_DiagnosticInfo.NumberDrawCalls);
 		ImGui::Text("Number Uniform Calls: %d", m_DiagnosticInfo.NumberUniformCalls);
 		ImGui::End();*/
+	}
+	
+	void Renderer2D::Init()
+	{
+		TextureProps ColorBuffer;
+
+		ColorBuffer.InternalFormat = TextureFormat::RGBA;
+		ColorBuffer.DataFormat = TextureFormat::RGBA;
+		ColorBuffer.DataType = TextureDataType::Ubyte;
+		ColorBuffer.MinFilter = TextureFilter::Nearest;
+		ColorBuffer.MagFilter = TextureFilter::Nearest;
+
+		m_Data.m_PostProcFrameBuffer = FrameBuffer::Create(true, { ColorBuffer });
+		m_Data.m_GeneralStorageBuffer = ShaderStorageBuffer::Create(0, sizeof(glm::mat4) + sizeof(glm::vec4));
+	}
+	void Renderer2D::OnWindowResize(unsigned int width, unsigned int height)
+	{
+		m_Data.m_Width = width;
+		m_Data.m_Height = height;
+		m_Data.m_PostProcFrameBuffer->Resize(width, height);
+		RenderCommand::SetViewport(0, 0, width, height);
+		if (m_Data.m_Camera && width != 0 && height != 0) m_Data.m_Camera->onResize(width, height);
+	}
+	void Renderer2D::BeginFrame(std::shared_ptr<Camera> camera)
+	{
+		// Store importent information in the main storage buffer.
+		m_Data.m_Camera = camera;
+		
+		uint32_t offset = 0;
+		m_Data.m_GeneralStorageBuffer->subData(offset, sizeof(glm::mat4), (const void*)glm::value_ptr(m_Data.m_Camera->getViewProjection())); offset += sizeof(glm::mat4);
+		m_Data.m_GeneralStorageBuffer->subData(offset, sizeof(glm::vec4), (const void*)glm::value_ptr(m_Data.m_Camera->getPosition()));		  offset += sizeof(glm::vec4);
+		m_Data.m_GeneralStorageBuffer->Bind();
+
+		RenderCommand::Clear();
+		m_Data.m_PostProcFrameBuffer->Bind();
+		RenderCommand::Clear();
+	}
+	void Renderer2D::EndFrame()
+	{
+		m_Data.m_GeneralStorageBuffer->Unbind();
+		m_Data.m_PostProcFrameBuffer->Unbind();
+	}
+	void Renderer2D::Render(std::shared_ptr<Shader> postProcShader)
+	{
+		postProcShader->Bind();
+		postProcShader->SetUniform("FrameTexture", UDTexture::Create(m_Data.m_PostProcFrameBuffer->GetTexture(1)));
+		postProcShader->SetUniform("Resolution", UDVec2::Create(m_Data.m_PostProcFrameBuffer->GetSize()));
+		RenderCommand::DrawIndexed(s_Quad);
+		postProcShader->Unbind();
+	}
+	void Renderer2D::DrawQuad(glm::vec2 position, glm::vec2 scale, glm::vec3 color, glm::vec3 tint, std::shared_ptr<Shader> shader)
+	{
+		shader->Bind();
+		shader->SetUniform("Model", UDMat4::Create(glm::translate(glm::scale(glm::mat4(1), {scale, 1}), {position, 0})));
+		shader->SetUniform("Color", UDVec3::Create(color));
+		shader->SetUniform("Tint", UDVec3::Create(tint));
+
+		RenderCommand::DrawIndexed(s_Quad);
+
+		shader->Unbind();
+	}
+	void Renderer2D::DrawQuad(glm::vec2 position, glm::vec2 scale, std::shared_ptr<Texture2D> texture, glm::vec3 tint, std::shared_ptr<Shader> shader)
+	{
+		shader->Bind();
+		shader->SetUniform("Model", UDMat4::Create(glm::translate(glm::scale(glm::mat4(1), { scale, 1 }), { position, 0 })));
+		shader->SetUniform("ColorTexture", UDTexture::Create(texture));
+		shader->SetUniform("Tint", UDVec3::Create(tint));
+		
+		RenderCommand::DrawIndexed(s_Quad);
+
+		shader->Unbind();
+	}
+	void Renderer2D::DrawRotatedQuad(glm::vec2 position, glm::vec2 scale, float rotation, glm::vec3 color, glm::vec3 tint, std::shared_ptr<Shader> shader)
+	{
+		shader->Bind();
+		shader->SetUniform("Model", UDMat4::Create(glm::rotate(glm::translate(glm::scale(glm::mat4(1), { scale, 1 }), {position, 0}), rotation, { 0,0,1 })));
+		shader->SetUniform("Color", UDVec3::Create(color));
+		shader->SetUniform("Tint", UDVec3::Create(tint));
+
+		RenderCommand::DrawIndexed(s_Quad);
+
+		shader->Unbind();
+	}
+	void Renderer2D::DrawRotatedQuad(glm::vec2 position, glm::vec2 scale, float rotation, std::shared_ptr<Texture2D> texture, glm::vec3 tint, std::shared_ptr<Shader> shader)
+	{
+		shader->Bind();
+		shader->SetUniform("Model", UDMat4::Create(glm::rotate(glm::translate(glm::scale(glm::mat4(1), { scale, 1 }), { position, 0 }), rotation, { 0,0,1 })));
+		shader->SetUniform("ColorTexture", UDTexture::Create(texture));
+		shader->SetUniform("Tint", UDVec3::Create(tint));
+
+		RenderCommand::DrawIndexed(s_Quad);
+
+		shader->Unbind();
+	}
+	void Renderer2D::ShowRendererDiagnostic()
+	{
+		Renderer::ShowRendererDiagnostic();
 	}
 }

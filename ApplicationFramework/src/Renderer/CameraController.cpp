@@ -87,4 +87,19 @@ namespace Engine::Renderer {
 
 		ImGui::End();*/
 	}
+	
+	
+	CameraController2D::CameraController2D(std::shared_ptr<Camera> camera, float speed)
+		: m_Camera(camera), m_Speed(speed)
+	{
+	}
+	void CameraController2D::OnUpdate(float delta_time)
+	{
+		if (Input::IsKeyPressed(KEY_W)) m_Camera->getPosition().y += m_Speed * delta_time;
+		if (Input::IsKeyPressed(KEY_S)) m_Camera->getPosition().y -= m_Speed * delta_time;
+		if (Input::IsKeyPressed(KEY_A)) m_Camera->getPosition().x -= m_Speed * delta_time;
+		if (Input::IsKeyPressed(KEY_D)) m_Camera->getPosition().x += m_Speed * delta_time;
+	
+		m_Camera->recalculateView();
+	}
 };
