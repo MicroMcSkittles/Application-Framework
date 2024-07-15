@@ -42,7 +42,7 @@ namespace Engine::Renderer {
 		ColorSpecularBuffer.DataType = TextureDataType::Ubyte;
 		ColorSpecularBuffer.MinFilter = TextureFilter::Nearest;
 		ColorSpecularBuffer.MagFilter = TextureFilter::Nearest;
-		m_Data.ColorSpecBufferIndex = 1;
+		m_Data.ColorSpecBufferIndex = 0;
 
 		m_Data.m_PostProcFrameBuffer = FrameBuffer::Create(true, { ColorSpecularBuffer });
 		m_Data.m_GeneralStorageBuffer = ShaderStorageBuffer::Create(0, sizeof(glm::mat4) + sizeof(glm::vec4));
@@ -221,7 +221,7 @@ namespace Engine::Renderer {
 	void Renderer2D::Render(std::shared_ptr<Shader> postProcShader)
 	{
 		postProcShader->Bind();
-		postProcShader->SetUniform("FrameTexture", UDTexture::Create(m_Data.m_PostProcFrameBuffer->GetTexture(1)));
+		postProcShader->SetUniform("FrameTexture", UDTexture::Create(m_Data.m_PostProcFrameBuffer->GetTexture(0)));
 		postProcShader->SetUniform("Resolution", UDVec2::Create(m_Data.m_PostProcFrameBuffer->GetSize()));
 		RenderCommand::DrawIndexed(s_Quad);
 		postProcShader->Unbind();

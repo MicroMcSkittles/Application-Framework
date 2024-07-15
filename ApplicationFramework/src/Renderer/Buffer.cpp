@@ -17,10 +17,10 @@ namespace Engine::Renderer {
 		}
 		return std::shared_ptr<IndexBuffer>();
 	}
-	std::shared_ptr<FrameBuffer> FrameBuffer::Create(bool UseColorBuffer, const std::vector<TextureProps>& TextureAttachments)
+	std::shared_ptr<FrameBuffer> FrameBuffer::Create(bool DepthTest, const std::vector<TextureProps>& TextureAttachments)
 	{
 		switch (Renderer::GetAPI()) {
-		case RendererAPI::API::OpenGL: return std::shared_ptr<FrameBuffer>(new OpenGL::OpenGLFrameBuffer(UseColorBuffer, TextureAttachments));
+		case RendererAPI::API::OpenGL: return std::shared_ptr<FrameBuffer>(new OpenGL::OpenGLFrameBuffer(DepthTest, TextureAttachments));
 		}
 		return std::shared_ptr<FrameBuffer>();
 	}

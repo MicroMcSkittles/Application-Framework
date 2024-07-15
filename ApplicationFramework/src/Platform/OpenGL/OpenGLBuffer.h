@@ -36,7 +36,7 @@ namespace Engine::Renderer {
 
 		class OpenGLFrameBuffer : public FrameBuffer {
 		public:
-			OpenGLFrameBuffer(bool UseColorBuffer, const std::vector<TextureProps>& TextureAttachments);
+			OpenGLFrameBuffer(bool DepthTest, const std::vector<TextureProps>& TextureAttachments);
 
 			virtual void Bind() const override;
 			virtual void Unbind() const override;
@@ -49,6 +49,7 @@ namespace Engine::Renderer {
 
 		private:
 			uint32_t m_RenderID, m_RBO;
+			bool m_DepthTesting;
 			glm::vec2 m_Size;
 			std::vector<std::shared_ptr<Texture2D>> m_Textures;
 		};

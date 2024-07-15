@@ -128,12 +128,11 @@ namespace Engine::Renderer {
 
 		virtual void Resize(uint32_t width, uint32_t height) = 0;
 
-		// The depth texture will always be at index 0
 		virtual std::shared_ptr<Texture2D> GetTexture(int index = 0) const = 0;
 
 		virtual glm::vec2 GetSize() const = 0;
 
-		static std::shared_ptr<FrameBuffer> Create(bool UseColorBuffer, const std::vector<TextureProps>& TextureAttachments);
+		static std::shared_ptr<FrameBuffer> Create(bool DepthTest, const std::vector<TextureProps>& TextureAttachments);
 	};
 
 	class ShaderStorageBuffer {
