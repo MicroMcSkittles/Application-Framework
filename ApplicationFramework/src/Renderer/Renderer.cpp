@@ -240,7 +240,7 @@ namespace Engine::Renderer {
 	void Renderer2D::DrawQuad(glm::vec2 position, glm::vec2 scale, std::shared_ptr<Texture2D> texture, glm::vec3 tint, std::shared_ptr<Shader> shader)
 	{
 		shader->Bind();
-		shader->SetUniform("Model", UDMat4::Create(glm::translate(glm::scale(glm::mat4(1), { scale, 1 }), { position, 0 })));
+		shader->SetUniform("Model", UDMat4::Create(glm::scale(glm::translate(glm::mat4(1.0f), { position, 0 }), { scale, 1 })));
 		shader->SetUniform("ColorTexture", UDTexture::Create(texture));
 		shader->SetUniform("Tint", UDVec3::Create(tint));
 		
@@ -251,7 +251,7 @@ namespace Engine::Renderer {
 	void Renderer2D::DrawRotatedQuad(glm::vec2 position, glm::vec2 scale, float rotation, glm::vec3 color, glm::vec3 tint, std::shared_ptr<Shader> shader)
 	{
 		shader->Bind();
-		shader->SetUniform("Model", UDMat4::Create(glm::rotate(glm::translate(glm::scale(glm::mat4(1), { scale, 1 }), {position, 0}), rotation, { 0,0,1 })));
+		shader->SetUniform("Model", UDMat4::Create(glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), { position, 0 }), rotation, { 0,0,1 }), { scale, 1 })));
 		shader->SetUniform("Color", UDVec3::Create(color));
 		shader->SetUniform("Tint", UDVec3::Create(tint));
 
@@ -262,7 +262,7 @@ namespace Engine::Renderer {
 	void Renderer2D::DrawRotatedQuad(glm::vec2 position, glm::vec2 scale, float rotation, std::shared_ptr<Texture2D> texture, glm::vec3 tint, std::shared_ptr<Shader> shader)
 	{
 		shader->Bind();
-		shader->SetUniform("Model", UDMat4::Create(glm::rotate(glm::translate(glm::scale(glm::mat4(1), { scale, 1 }), { position, 0 }), rotation, { 0,0,1 })));
+		shader->SetUniform("Model", UDMat4::Create(glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), {position, 0}), rotation, {0,0,1}), { scale, 1 })));
 		shader->SetUniform("ColorTexture", UDTexture::Create(texture));
 		shader->SetUniform("Tint", UDVec3::Create(tint));
 
